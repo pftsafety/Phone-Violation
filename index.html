@@ -447,9 +447,8 @@
           </div>
 
           <div class="field wide" id="hostSec" hidden>
-            <label for="hostCard">Visiting employee Card No</label>
-            <input id="hostCard" inputmode="numeric" autocomplete="off">
-            <div id="hostHint" class="hint"></div>
+            <label for="hostCard">Person visited <span class="muted">(optional)</span></label>
+            <input id="hostCard" autocomplete="off" placeholder="Name or card no of the employee visited">
           </div>
         </div>
       </div>
@@ -651,14 +650,15 @@ const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const phoneMQ = matchMedia('(max-width:719px)');
 const isPhone = () => phoneMQ.matches;
 
-// Staff data preloaded at page load. Kept in memory only, never in
-// localStorage, so personal data is not left on a shared device.
-const LOOKUP = { ppe: new Map(), ready: null };
+// Cards already recorded in the violation register, loaded when the page
+// opens. Kept in memory only, never in localStorage.
+const LOOKUP = { people: new Map(), ready: null };
 
 // ===== API =====
 // Expects {ok:true, result:...} or {ok:false, error:"..."}
+// The route name is applied last so a form field can never overwrite it.
 async function api(action, params = {}) {
-  const qs = new URLSearchParams({ action, officer: OFFICER_NAME, ...params });
+  const qs = new URLSearchParams({ ...params, action, officer: OFFICER_NAME });
   const res = await fetch(`${API_URL}?${qs.toString()}`);
   let data;
   try {
@@ -754,31 +754,31 @@ function initials(name) {
 }
 
 // ===== PRELOAD =====
-// Loads the PPE register and company list once, while the page opens.
-// Lookups then read from memory. If the preload fails, lookups go live.
+// Loads cards and companies already in the violation register, once, while
+// the page opens. If it fails, card lookups ask the server live instead.
 function preloadLookups() {
   setStatus();
   LOOKUP.ready = api('lookupData')
     .then(d => {
-      LOOKUP.ppe = new Map((d.ppe || []).map(p => [
+      LOOKUP.people = new Map((d.people || []).map(p => [
         normCard(p.cardNo),
         { cardNo: normCard(p.cardNo), name: String(p.name || '').trim(), section: String(p.section || '').trim() }
       ]));
       (d.companies || []).forEach(c => appendOption($('companyList'), c));
       setStatus();
     })
-    .catch(() => setStatus('Staff data unavailable. Lookups will run live.', 'warn'));
+    .catch(e => setStatus((e && e.message) || 'Could not load earlier records.', 'warn'));
   return LOOKUP.ready;
 }
 
-// Reads from the preloaded data when possible. Falls back to the server for
-// cards not in the preload, so a card added today is still found.
-async function findStaff(card) {
+// Looks in the preloaded register data first, then asks the server, so a
+// card recorded a moment ago by another officer is still found.
+async function findCard(card) {
   const key = normCard(card);
   if (!key) return null;
   await LOOKUP.ready;
-  if (LOOKUP.ppe.has(key)) return LOOKUP.ppe.get(key);
-  return api('ppeLookup', { cardNo: key });
+  if (LOOKUP.people.has(key)) return LOOKUP.people.get(key);
+  return api('cardLookup', { cardNo: key });
 }
 
 // ===== CHIPS =====
@@ -889,7 +889,6 @@ function applyPersonType() {
 function resetPerson() {
   ['cardNo', 'name', 'section', 'company', 'supervisor', 'hostCard'].forEach(id => $(id).value = '');
   setHint($('cardHint'), '');
-  setHint($('hostHint'), '');
   $('similarBox').innerHTML = '';
   state.prior = 0;
   state.lastDate = null;
@@ -908,15 +907,15 @@ async function onCardChange() {
     return renderGuide();
   }
   setLoading(input, true);
-  setHint($('cardHint'), 'Looking up…');
+  setHint($('cardHint'), 'Checking the register…');
   try {
-    const r = await findStaff(card);
+    const r = await findCard(card);
     if (r) {
       $('name').value = r.name;
       $('section').value = r.section;
-      setHint($('cardHint'), 'Found in the PPE register. Name and section can be edited.');
+      setHint($('cardHint'), 'Recorded before. Name and section filled in, and can be edited.');
     } else {
-      setHint($('cardHint'), 'Not in the PPE register. Type the name and section.', true);
+      setHint($('cardHint'), 'New card number. Type the name and section.');
     }
   } catch (e) {
     setHint($('cardHint'), e.message, true);
@@ -926,378 +925,6 @@ async function onCardChange() {
   await loadHistory();
 }
 
-async function onHostChange() {
-  const input = $('hostCard');
-  const card = normCard(input.value);
-  if (!card) return setHint($('hostHint'), '');
-  setLoading(input, true);
-  setHint($('hostHint'), 'Looking up…');
-  try {
-    const r = await findStaff(card);
-    setHint($('hostHint'), r ? `Host: ${r.name} · ${r.section}` : 'Host card not found.', !r);
-  } catch (e) {
-    setHint($('hostHint'), e.message, true);
-  } finally {
-    setLoading(input, false);
-  }
-}
-
 async function checkSimilarVisitors() {
   const box = $('similarBox');
   box.innerHTML = '';
-  const name = $('name').value.trim();
-  const company = $('company').value.trim();
-  if (!name) return;
-  try {
-    const matches = await api('similarVisitors', { name, company });
-    if (!matches || !matches.length) return;
-
-    const note = document.createElement('div');
-    note.className = 'hint';
-    note.textContent = 'Possible earlier entries. Pick one, or keep the name if this is a different person.';
-    box.appendChild(note);
-
-    matches.forEach(m => {
-      const row = document.createElement('div');
-      row.className = 'match';
-      const label = document.createElement('span');
-      label.textContent = `${m.name} · ${m.company} · last seen ${new Date(m.lastSeen).toLocaleDateString()}`;
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = 'Use this';
-      btn.addEventListener('click', () => {
-        $('name').value = m.name;
-        $('company').value = m.company;
-        box.innerHTML = '';
-        loadHistory();
-      });
-      row.append(label, btn);
-      box.appendChild(row);
-    });
-  } catch (e) {
-    // Advisory only: a failed check must not block saving
-  }
-}
-
-async function onVisitorChange() {
-  await checkSimilarVisitors();
-  await loadHistory();
-}
-
-async function loadHistory() {
-  const t = currentType();
-  let params = null;
-  if (t === 'Visitor') {
-    const name = $('name').value.trim();
-    const company = $('company').value.trim();
-    if (name && company) params = { personType: t, name, company };
-  } else {
-    const cardNo = normCard($('cardNo').value);
-    if (cardNo) params = { personType: t, cardNo };
-  }
-  if (!params) {
-    state.prior = 0; state.lastDate = null;
-    return renderGuide();
-  }
-  try {
-    const h = await api('personHistory', params);
-    state.prior = h.count || 0;
-    state.lastDate = h.lastDate || null;
-  } catch (e) {
-    state.prior = 0; state.lastDate = null;
-  }
-  renderGuide();
-}
-
-// ===== POLICY LOGIC =====
-// The server should compute the occurrence number itself when saving.
-function suggest(t, n, source, activity, area) {
-  const notes = [];
-  const ai = source === 'AI detection';
-  let nature;
-
-  if (activity === 'Forklift or vehicle operation') notes.push({ tone: 'danger', text: 'Vehicle operation: phone use is strictly prohibited.' });
-  if (LEVEL2.has(area)) notes.push({ text: 'Level 2 area: personal use is allowed only during breaks at designated places.' });
-
-  if (t === 'Visitor') {
-    nature = n === 1 ? NATURE.visitor : NATURE.visitorRepeat;
-  } else if (t === 'Trainee / apprentice') {
-    nature = (ai || n > 1) ? NATURE.traineeRepeat : NATURE.traineeFirst;
-    notes.push({ text: 'The supervisor is accountable for trainees and apprentices.' });
-  } else if (t === 'Contractor') {
-    nature = NATURE.contract;
-    notes.push({ text: 'Notify the contractor supervisor and seek corrective action from contractor management.' });
-  } else if (ai) {
-    nature = NATURE.ai;
-  } else if (n === 1) {
-    nature = NATURE.first;
-  } else if (n === 2) {
-    nature = NATURE.second;
-  } else if (n === 3) {
-    nature = NATURE.third;
-  } else {
-    nature = NATURE.repeated;
-  }
-
-  let primary = nature;
-  if (activity === 'Hazardous operation') {
-    notes.push({ tone: 'danger', text: `Then apply: ${nature.name}. ${nature.text}` });
-    primary = NATURE.hazard;
-  }
-  return { nature: primary, notes };
-}
-
-function fillPolicyLine(prefix, s, n, changed) {
-  const wrap = $(prefix === 'pl' ? 'namePolicy' : 'outPolicy');
-  wrap.hidden = false;
-  wrap.classList.toggle('repeat', !!s.nature.repeat);
-  $(prefix + 'Tag').textContent = s.nature.repeat ? 'Repeat' : 'Policy action';
-  $(prefix + 'Action').textContent = s.nature.action;
-  $(prefix + 'Nature').textContent = s.nature.name + (n > 1 ? ` · violation ${n}` : '');
-  if (changed && !reducedMotion) restartAnimation(wrap, 'pop');
-}
-
-function renderGuide() {
-  const t = currentType();
-  const n = state.prior + 1;
-  const area = canon($('area').value, ALL_AREAS);
-  const activity = canon($('activity').value, ACTIVITIES);
-  const name = $('name').value.trim();
-  const hasPerson = name !== '';
-  const box = $('gNatureBox');
-
-  countUp($('gPrior'), state.prior);
-  countUp($('gOcc'), n);
-  $('gLevel').textContent = areaLevel(area);
-  $('gLast').textContent = state.lastDate
-    ? 'Last recorded ' + new Date(state.lastDate).toLocaleDateString()
-    : (state.prior ? '' : 'No earlier violations on record.');
-
-  // Recap card on the Outcome step
-  $('rAvatar').textContent = initials(name);
-  $('rName').textContent = name || 'No person yet';
-  const meta = [t, $('section').value.trim() || $('company').value.trim()].filter(Boolean).join(' · ');
-  $('rMeta').textContent = hasPerson ? meta : 'Go back and enter who it was';
-  $('rCount').textContent = n;
-
-  if (!hasPerson) {
-    $('namePolicy').hidden = true;
-    $('outPolicy').hidden = true;
-    box.hidden = true;
-    $('gAction').textContent = 'Enter the person to see the suggested action.';
-    $('gNotes').innerHTML = '';
-    state.lastNature = '';
-    return;
-  }
-
-  const s = suggest(t, n, chipValue('sourceChips'), activity, area);
-  const changed = s.nature.name !== state.lastNature;
-
-  fillPolicyLine('pl', s, n, changed);
-  fillPolicyLine('op', s, n, changed);
-
-  box.hidden = false;
-  box.classList.toggle('repeat', !!s.nature.repeat);
-  $('gNature').textContent = s.nature.name;
-  $('gText').textContent = s.nature.text;
-  $('gAction').textContent = 'Suggested action: ' + s.nature.action;
-  $('gNotes').innerHTML = s.notes
-    .map(x => `<li class="${esc(x.tone || '')}">${esc(x.text)}</li>`).join('');
-
-  if (changed) {
-    state.lastNature = s.nature.name;
-    if (!reducedMotion) restartAnimation($('guide'), 'pop');
-  }
-  if (!state.actionTouched) $('action').value = s.nature.action;
-}
-
-// ===== SAVE / CONTINUE =====
-async function onSubmit(e) {
-  e.preventDefault();
-
-  // On phones the button moves through the steps first
-  if (isPhone() && state.step < 3) {
-    const { miss, ids } = missingFor(state.step);
-    if (miss.length) {
-      markInvalid(ids);
-      return showMsg('Please fill in: ' + miss.join(', ') + '.', true);
-    }
-    return goStep(state.step + 1);
-  }
-
-  // Full check before saving
-  for (const step of [1, 2, 3]) {
-    const { miss, ids } = missingFor(step);
-    if (miss.length) {
-      if (isPhone()) goStep(step, true);
-      markInvalid(ids);
-      return showMsg('Please fill in: ' + miss.join(', ') + '.', true);
-    }
-  }
-
-  const t = currentType();
-  const visitor = t === 'Visitor';
-  const v = {
-    personType: t,
-    cardNo: visitor ? '' : normCard($('cardNo').value),
-    name: $('name').value.trim(),
-    section: visitor ? '' : $('section').value.trim(),
-    company: (t === 'Contractor' || visitor) ? $('company').value.trim() : '',
-    supervisor: (t === 'Contractor' || t === 'Trainee / apprentice') ? $('supervisor').value.trim() : '',
-    hostCard: visitor ? normCard($('hostCard').value) : '',
-    source: chipValue('sourceChips'),
-    area: canon($('area').value, ALL_AREAS),
-    activity: canon($('activity').value, ACTIVITIES),
-    remarks: $('remarks').value.trim(),
-    action: canon($('action').value, ACTIONS),
-    status: $('status').value
-  };
-
-  const btn = $('nextBtn');
-  btn.disabled = true;
-  try {
-    const r = await api('saveViolation', v);
-    showMsg(`Saved as ${r.recordId}`);
-    restartAnimation(btn, 'done');
-    // Keep the person type for the next entry; clear everything else
-    $('vform').reset();
-    clearChips('sourceChips');
-    state.actionTouched = false;
-    applyPersonType();
-    goStep(1, true);
-    window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
-  } catch (err) {
-    showMsg(err.message, true);
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-// ===== REPORTS =====
-function table(headers, rows) {
-  const head = `<thead><tr>${headers.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>`;
-  const body = rows.length
-    ? rows.map(r => `<tr>${r.map((c, i) => `<td data-label="${esc(headers[i])}">${c}</td>`).join('')}</tr>`).join('')
-    : `<tr><td colspan="${headers.length}">No records</td></tr>`;
-  return `<div class="table-wrap"><table class="stack">${head}<tbody>${body}</tbody></table></div>`;
-}
-
-function renderReport(r) {
-  const bySec = Object.entries(r.bySection || {}).map(([k, v]) => [esc(k), esc(v)]);
-  const bySrc = Object.entries(r.bySource || {}).map(([k, v]) => [esc(k), esc(v)]);
-  const reps = (r.repeatOffenders || []).map(p => [esc(p.name), esc(p.cardNo || p.company || '—'), esc(p.count)]);
-  const recs = (r.rows || []).map(x => [
-    esc(fmt(x.dateTime)), esc(x.name), esc(x.cardNo || x.company || '—'),
-    esc(x.area), esc(x.source), esc(x.action), esc(x.status)
-  ]);
-  const ai = (r.bySource || {})['AI detection'] || 0;
-
-  $('reportOut').innerHTML = `
-    <div class="report-stats">
-      <div class="stat"><b>${esc(r.total)}</b>In period</div>
-      <div class="stat"><b>${esc(r.previous)}</b>Previous</div>
-      <div class="stat"><b>${esc(ai)}</b>AI-detected</div>
-    </div>
-    <h4>By section</h4>
-    ${table(['Section', 'Count'], bySec)}
-    <h4>By detection source</h4>
-    ${table(['Source', 'Count'], bySrc)}
-    <h4>Repeat offenders</h4>
-    ${table(['Name', 'Card No / company', 'Count'], reps)}
-    <h4>Records</h4>
-    ${table(['Date and time', 'Name', 'Card No / company', 'Area', 'Source', 'Action', 'Status'], recs)}`;
-}
-
-function setPreset(kind) {
-  const now = new Date();
-  let s, e;
-  if (kind === 'week') {
-    const day = (now.getDay() + 6) % 7; // Monday as the first day
-    s = new Date(now); s.setDate(now.getDate() - day);
-    e = now;
-  } else if (kind === 'month') {
-    s = new Date(now.getFullYear(), now.getMonth(), 1);
-    e = now;
-  } else {
-    s = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    e = new Date(now.getFullYear(), now.getMonth(), 0);
-  }
-  $('start').value = iso(s);
-  $('end').value = iso(e);
-}
-
-function showView(name) {
-  const rec = name === 'record';
-  $('viewRecord').hidden = !rec;
-  $('viewReport').hidden = rec;
-  document.querySelectorAll('[role="tab"]').forEach(t =>
-    t.setAttribute('aria-selected', String(t.dataset.view === name)));
-  window.scrollTo({ top: 0, behavior: 'auto' });
-}
-
-// ===== INIT =====
-function init() {
-  preloadLookups();
-
-  $('todayText').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
-
-  buildChips('personChips', PERSON_TYPES, 'Employee', applyPersonType);
-  buildChips('sourceChips', SOURCES, null, renderGuide);
-
-  ALL_AREAS.forEach(a => appendOption($('areaList'), a));
-  ACTIVITIES.forEach(a => appendOption($('activityList'), a));
-  SECTIONS.forEach(s => appendOption($('sectionList'), s));
-  ACTIONS.forEach(a => appendOption($('actionList'), a));
-
-  $('cardNo').addEventListener('change', onCardChange);
-  $('hostCard').addEventListener('change', onHostChange);
-
-  // Live update while typing the name; history lookups run on leaving the field
-  $('name').addEventListener('input', renderGuide);
-  $('name').addEventListener('change', () => {
-    if (currentType() === 'Visitor') onVisitorChange();
-    else renderGuide();
-  });
-  $('section').addEventListener('input', renderGuide);
-  $('company').addEventListener('input', renderGuide);
-  $('company').addEventListener('change', onVisitorChange);
-  $('area').addEventListener('input', renderGuide);
-  $('activity').addEventListener('input', renderGuide);
-  $('action').addEventListener('input', () => { state.actionTouched = true; });
-
-  $('vform').addEventListener('submit', onSubmit);
-  $('backBtn').addEventListener('click', () => goStep(Math.max(1, state.step - 1), true));
-  document.querySelectorAll('#stepper li').forEach(li =>
-    li.addEventListener('click', () => {
-      const s = Number(li.dataset.s);
-      if (s < state.step) goStep(s, true);
-    }));
-
-  document.querySelectorAll('[role="tab"]').forEach(b =>
-    b.addEventListener('click', () => showView(b.dataset.view)));
-
-  document.querySelectorAll('[data-preset]').forEach(b =>
-    b.addEventListener('click', () => setPreset(b.dataset.preset)));
-
-  $('runReport').addEventListener('click', async () => {
-    const start = $('start').value, end = $('end').value;
-    if (!start || !end) return showMsg('Choose both dates for the report.', true);
-    $('reportOut').innerHTML = '<p class="muted">Generating report…</p>';
-    try {
-      renderReport(await api('report', { start, end }));
-    } catch (err) {
-      $('reportOut').innerHTML = '';
-      showMsg(err.message, true);
-    }
-  });
-
-  $('printBtn').addEventListener('click', () => window.print());
-
-  applyPersonType();
-  goStep(1);
-}
-
-init();
-</script>
-</body>
-</html>
