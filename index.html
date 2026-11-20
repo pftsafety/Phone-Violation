@@ -10,7 +10,6 @@
      DESIGN TOKENS
      ============================================================ */
   :root{
-    /* Surfaces */
     --bg:#f2f4f7;
     --surface:#ffffff;
     --surface-muted:#f9fafb;
@@ -18,19 +17,17 @@
     --border:#e4e7ec;
     --border-strong:#d0d5dd;
 
-    /* Text */
     --text:#101828;
     --text-2:#344054;
     --text-muted:#667085;
+    --text-faint:#98a2b3;
 
-    /* Brand */
     --primary:#0b6e8a;
     --primary-hover:#095c75;
     --primary-ink:#075468;
     --primary-soft:#e7f3f7;
     --primary-border:#a9d3e0;
 
-    /* Semantic status */
     --danger:#b42318;
     --danger-soft:#fef3f2;
     --danger-border:#fda29b;
@@ -39,22 +36,19 @@
     --warning-border:#fedf89;
     --success:#067647;
     --success-soft:#ecfdf3;
+    --success-border:#abefc6;
 
-    /* Shape and elevation */
-    --radius-sm:6px;
-    --radius-md:10px;
-    --radius-lg:14px;
+    --r-md:10px;
+    --r-lg:14px;
     --shadow-1:0 1px 2px rgba(16,24,40,.06);
     --shadow-2:0 8px 24px rgba(16,24,40,.12);
 
-    /* Spacing scale */
     --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px;
 
-    /* Type and layout */
     --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    --topbar-h:56px;
-    --nav-h:64px;
-    --actionbar-h:80px;
+    --topbar-h:52px;
+    --tabbar-h:60px;
+    --actionbar-h:68px;
     --ease:cubic-bezier(.2,.6,.2,1);
   }
 
@@ -66,8 +60,7 @@
   html{-webkit-text-size-adjust:100%;background:var(--bg)}
   body{
     margin:0;min-height:100vh;background:var(--bg);color:var(--text);
-    font-family:var(--font);font-size:15px;line-height:1.5;
-    -webkit-font-smoothing:antialiased;
+    font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
   }
   button,input,select,textarea{font:inherit;color:inherit}
   h1,h2,h3,p,dl,dd{margin:0}
@@ -79,14 +72,12 @@
   .skip-link{
     position:absolute;left:var(--s4);top:-80px;z-index:100;
     padding:var(--s2) var(--s4);background:var(--surface);border:1px solid var(--border-strong);
-    border-radius:var(--radius-md);font-weight:600;text-decoration:none;color:var(--text);
+    border-radius:var(--r-md);font-weight:600;text-decoration:none;color:var(--text);
   }
   .skip-link:focus{top:var(--s4)}
 
   .muted{color:var(--text-muted);font-size:13px}
-  .eyebrow{
-    font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);
-  }
+  .eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)}
   h1{font-size:22px;line-height:1.25;font-weight:650;letter-spacing:-.01em}
   .page-lede{color:var(--text-muted);font-size:14px;max-width:62ch}
 
@@ -95,25 +86,21 @@
      ============================================================ */
   .app{display:grid;grid-template-columns:minmax(0,1fr);min-height:100vh}
   .workspace{min-width:0;display:flex;flex-direction:column}
-
   .sidebar{display:none}
 
   .topbar{
     position:sticky;top:0;z-index:30;
-    display:flex;align-items:center;gap:var(--s4);
-    min-height:var(--topbar-h);padding:var(--s3) var(--s4);
-    padding-top:calc(var(--s3) + env(safe-area-inset-top,0px));
+    display:flex;align-items:center;gap:var(--s3);
+    min-height:var(--topbar-h);padding:var(--s2) var(--s3);
+    padding-top:calc(var(--s2) + env(safe-area-inset-top,0px));
     background:var(--surface);border-bottom:1px solid var(--border);
   }
   .topbar-title{display:flex;align-items:center;gap:var(--s3);min-width:0;flex:1}
   .crumbs{display:flex;align-items:center;gap:var(--s2);font-size:14px;color:var(--text-muted);min-width:0;white-space:nowrap}
   .crumbs [aria-current]{color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis;min-width:0}
 
-  .brand-mark{
-    width:32px;height:32px;border-radius:var(--radius-md);
-    display:grid;place-items:center;background:var(--primary);color:#fff;
-  }
-  .brand-mark svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .brand-mark{width:30px;height:30px;border-radius:var(--r-md);display:grid;place-items:center;background:var(--primary);color:#fff}
+  .brand-mark svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 
   .top-nav{display:none;gap:var(--s1);margin-left:auto}
 
@@ -124,126 +111,64 @@
   }
   .sync::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
 
-  .content{
-    flex:1;width:100%;max-width:1200px;margin:0 auto;
-    padding:var(--s5) var(--s4) var(--s8);
-  }
-
+  .content{flex:1;width:100%;max-width:1200px;margin:0 auto;padding:var(--s5) var(--s4) var(--s8)}
   .view{animation:fade .18s var(--ease)}
   @keyframes fade{from{opacity:0}to{opacity:1}}
 
-  .page-head{display:flex;flex-direction:column;gap:var(--s2);margin-bottom:var(--s5)}
+  .page-head{display:flex;flex-direction:column;gap:var(--s2);margin-bottom:var(--s4)}
 
-  /* Navigation items (sidebar, tablet top bar, phone bottom bar) */
   .nav-item{
     display:flex;align-items:center;gap:var(--s3);width:100%;
-    padding:var(--s2) var(--s3);border:0;border-radius:var(--radius-md);
+    padding:var(--s2) var(--s3);border:0;border-radius:var(--r-md);
     background:transparent;color:var(--text-2);font-size:14px;font-weight:500;
     text-align:left;cursor:pointer;transition:background .15s,color .15s;
   }
   .nav-item:hover{background:var(--surface-sunken)}
   .nav-item[aria-current="page"]{background:var(--primary-soft);color:var(--primary-ink);font-weight:600}
   .nav-item svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-
   .top-nav .nav-item{width:auto;padding:6px 12px}
 
   .bottom-nav{
     position:fixed;left:0;right:0;bottom:0;z-index:40;
-    display:none;grid-template-columns:1fr 1fr;grid-template-rows:var(--nav-h);
-    height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));
-    padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;
+    display:none;grid-template-columns:1fr 1fr;
+    height:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px));
+    padding:0 var(--s2) env(safe-area-inset-bottom,0px);box-sizing:border-box;
     background:var(--surface);border-top:1px solid var(--border);
   }
   .bottom-nav .nav-item{
     flex-direction:column;justify-content:center;gap:2px;height:100%;
-    padding:6px 4px;font-size:12px;line-height:1.3;border-radius:0;
+    padding:6px 4px;font-size:12px;line-height:1.2;border-radius:var(--r-md);
   }
-  .bottom-nav .nav-item[aria-current="page"]{background:transparent;color:var(--primary)}
+  .bottom-nav .nav-item svg{width:20px;height:20px}
+  .bottom-nav .nav-item[aria-current="page"]{background:var(--primary-soft);color:var(--primary-ink)}
   .bottom-nav .nav-item[aria-current="page"] svg{stroke-width:2.2}
 
   /* ============================================================
-     CARDS AND SURFACES
+     CARDS
      ============================================================ */
-  .card{
-    background:var(--surface);border:1px solid var(--border);
-    border-radius:var(--radius-lg);box-shadow:var(--shadow-1);padding:var(--s5);
-  }
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow-1);min-width:0}
+  .form-card{max-width:960px}
 
-  .record-layout{display:grid;gap:var(--s5);align-items:start}
-
-  .form-card{padding:0}
-  .form-progress{padding:var(--s4) var(--s5) var(--s3)}
-
-  .steps{display:flex;gap:var(--s3)}
-  .steps li{flex:1;min-width:0}
-  .steps-btn{
-    display:flex;align-items:center;gap:var(--s2);width:100%;
-    padding:0;border:0;background:none;cursor:pointer;
-    font-size:13px;font-weight:500;color:var(--text-muted);text-align:left;
-  }
-  .steps-btn:disabled{cursor:default}
-  .steps li.active .steps-btn{color:var(--text);font-weight:600}
-  .steps li.done .steps-btn{color:var(--text-2)}
-  .step-num{
-    width:24px;height:24px;flex:0 0 24px;border-radius:50%;
-    display:inline-grid;place-items:center;font-size:12px;font-weight:650;
-    background:var(--surface-sunken);color:var(--text-2);border:1px solid var(--border-strong);
-  }
-  .steps li.active .step-num{background:var(--primary);border-color:var(--primary);color:#fff}
-  .steps li.done .step-num{background:var(--primary-soft);border-color:var(--primary-border);color:var(--primary-ink)}
-
-  .progress{height:4px;margin-top:var(--s3);border-radius:99px;background:var(--surface-sunken);overflow:hidden}
+  /* ============================================================
+     RECORD FORM
+     ============================================================ */
+  .phone-progress{display:none}
+  .progress{height:4px;border-radius:99px;background:var(--surface-sunken);overflow:hidden}
   .progress i{display:block;height:100%;width:33%;background:var(--primary);transition:width .25s var(--ease)}
 
-  .step{padding:var(--s5)}
+  .step{display:block;padding:var(--s5)}
   .step + .step{border-top:1px solid var(--border)}
-  .step-title{
-    display:flex;align-items:center;gap:var(--s3);
-    font-size:16px;font-weight:650;margin-bottom:var(--s4);
-  }
+  .step-count{display:none;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--primary-ink);margin-bottom:var(--s1)}
+  .step-title{font-size:16px;font-weight:650;margin-bottom:var(--s4)}
 
   .form-actions{
     display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
-    padding:var(--s4) var(--s5);
-    border-top:1px solid var(--border);background:var(--surface-muted);
-    border-radius:0 0 var(--radius-lg) var(--radius-lg);
+    padding:var(--s4) var(--s5);border-top:1px solid var(--border);
+    background:var(--surface-muted);border-radius:0 0 var(--r-lg) var(--r-lg);
   }
-  .btn-group{display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap}
+  .btn-group{display:flex;align-items:center;gap:var(--s2)}
+  .form-actions .btn-group{margin-left:auto}
 
-  .guide{position:relative}
-  .guide-head{display:flex;align-items:center;gap:var(--s3);margin-bottom:var(--s4)}
-  .guide-head h2{font-size:15px;font-weight:650}
-  .badge{
-    font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-    color:var(--primary-ink);background:var(--primary-soft);
-    border:1px solid var(--primary-border);padding:3px 8px;border-radius:6px;
-  }
-
-  .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s2);margin-bottom:var(--s3)}
-  .metric{padding:var(--s3);border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface-muted);min-width:0}
-  .metric dt{font-size:12px;color:var(--text-muted);font-weight:500}
-  .metric dd{margin-top:2px;font-size:22px;font-weight:650;line-height:1.2;font-variant-numeric:tabular-nums}
-  .metric dd.metric-text{font-size:14px;padding-top:4px;overflow-wrap:anywhere}
-
-  .nature{
-    padding:var(--s4);margin-bottom:var(--s3);
-    border:1px solid var(--border);border-left:3px solid var(--primary);
-    border-radius:var(--radius-md);background:var(--surface-muted);
-  }
-  .nature.repeat{border-color:var(--danger-border);border-left-color:var(--danger);background:var(--danger-soft)}
-  .nature-name{font-weight:650;margin:var(--s1) 0 var(--s2)}
-  .nature-text{font-size:14px;color:var(--text-2)}
-  .nature.repeat .nature-name{color:var(--danger)}
-
-  .guide-action{font-weight:600;margin-bottom:var(--s3)}
-  .notes{display:grid;gap:var(--s2)}
-  .notes li{padding:10px 12px;border-radius:var(--radius-md);background:var(--surface-sunken);font-size:13px;color:var(--text-2)}
-  .notes li.danger{background:var(--danger-soft);color:var(--danger)}
-  .notes li.warn{background:var(--warning-soft);color:var(--warning)}
-
-  /* ============================================================
-     FORMS
-     ============================================================ */
   .fields{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s4)}
   .wide{grid-column:1 / -1}
   .field{display:flex;flex-direction:column;min-width:0}
@@ -252,14 +177,14 @@
   .req::after{content:" *";color:var(--danger)}
 
   input:not([type="checkbox"]),select,textarea{
-    width:100%;min-height:42px;padding:9px 12px;
+    width:100%;min-height:44px;padding:9px 12px;
     background:var(--surface);color:var(--text);
-    border:1px solid var(--border-strong);border-radius:var(--radius-md);
+    border:1px solid var(--border-strong);border-radius:var(--r-md);
     font-size:16px;appearance:none;-webkit-appearance:none;
     transition:border-color .15s,box-shadow .15s;
   }
-  input::placeholder,textarea::placeholder{color:#98a2b3}
-  input:hover,select:hover,textarea:hover{border-color:#98a2b3}
+  input::placeholder,textarea::placeholder{color:var(--text-faint)}
+  input:hover,select:hover,textarea:hover{border-color:var(--text-faint)}
   input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
   input[readonly]{background:var(--surface-muted)}
   select{
@@ -271,8 +196,7 @@
 
   input.is-loading{
     background-image:linear-gradient(90deg,transparent,var(--surface-sunken),transparent);
-    background-size:200% 100%;background-repeat:no-repeat;
-    animation:shimmer 1.2s linear infinite;
+    background-size:200% 100%;background-repeat:no-repeat;animation:shimmer 1.2s linear infinite;
   }
   @keyframes shimmer{from{background-position:150% 0}to{background-position:-50% 0}}
 
@@ -287,7 +211,7 @@
   .field-error{display:none;margin-top:var(--s2);font-size:13px;color:var(--danger)}
   .field-error.show{display:block}
 
-  /* Option chips (radio group) */
+  /* Option chips (radio groups) */
   .chips{display:flex;flex-wrap:wrap;gap:var(--s2)}
   .chip{
     display:inline-flex;align-items:center;gap:var(--s2);
@@ -297,38 +221,38 @@
     transition:background .15s,border-color .15s,color .15s;
   }
   .chip:hover{border-color:var(--primary-border);background:var(--surface-muted)}
-  .chip[aria-checked="true"]{
-    background:var(--primary-soft);border-color:var(--primary);color:var(--primary-ink);font-weight:600;
-  }
-  .chip[aria-checked="true"]::before{
-    content:"";width:8px;height:8px;border-radius:50%;background:var(--primary);
-  }
-  .chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 2px 4px}
+  .chip[aria-checked="true"]{background:var(--primary-soft);border-color:var(--primary);color:var(--primary-ink);font-weight:600}
+  .chip[aria-checked="true"]::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--primary)}
+  .chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 2px 4px;margin:0 -2px}
   .chips.scroll::-webkit-scrollbar{display:none}
   .chips.scroll .chip{flex:0 0 auto}
 
-  /* Policy line shown under Name and in the Outcome step */
+  /* Policy blocks (under Name and in the Outcome step) */
   .policy{
-    display:flex;flex-wrap:wrap;align-items:center;gap:var(--s1) var(--s3);
-    margin-top:var(--s3);padding:10px 12px;
-    border:1px solid var(--primary-border);border-radius:var(--radius-md);background:var(--primary-soft);
+    margin-top:var(--s3);padding:var(--s3);
+    border:1px solid var(--primary-border);border-radius:var(--r-md);background:var(--primary-soft);
   }
+  .policy-top{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s2)}
   .policy-tag{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--primary-ink)}
-  .policy-action{font-weight:600;color:var(--text)}
-  .policy-nature{width:100%;font-size:13px;color:var(--text-muted)}
+  .policy-nature{font-size:12px;color:var(--text-muted)}
+  .policy-action{margin-top:var(--s1);font-weight:650;color:var(--text)}
+  .policy-text{margin-top:var(--s1);font-size:13px;color:var(--text-2)}
+  .policy-notes{margin-top:var(--s2);display:grid;gap:var(--s1)}
+  .policy-notes li{font-size:13px;color:var(--text-2);padding-left:var(--s3);position:relative}
+  .policy-notes li::before{content:"";position:absolute;left:0;top:.6em;width:5px;height:5px;border-radius:50%;background:var(--primary)}
+  .policy-notes li.danger{color:var(--danger)}
+  .policy-notes li.danger::before{background:var(--danger)}
+  .policy-notes li.muted-note{color:var(--text-muted)}
+  .policy-notes li.muted-note::before{background:var(--text-faint)}
   .policy.repeat{border-color:var(--danger-border);background:var(--danger-soft)}
   .policy.repeat .policy-tag,.policy.repeat .policy-nature{color:var(--danger)}
 
   .recap{
     display:flex;align-items:center;gap:var(--s3);
-    padding:var(--s4);margin-bottom:var(--s4);
-    border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface-muted);
+    padding:var(--s3) var(--s4);margin-bottom:var(--s3);
+    border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-muted);
   }
-  .avatar{
-    width:40px;height:40px;flex:0 0 40px;border-radius:50%;
-    display:grid;place-items:center;font-weight:650;
-    background:var(--primary-soft);color:var(--primary-ink);
-  }
+  .avatar{width:40px;height:40px;flex:0 0 40px;border-radius:50%;display:grid;place-items:center;font-weight:650;background:var(--primary-soft);color:var(--primary-ink)}
   .recap-main{min-width:0;flex:1}
   .recap-main b{display:block;overflow-wrap:anywhere}
   .recap-main span{font-size:13px;color:var(--text-muted)}
@@ -338,8 +262,7 @@
   .match{
     display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:var(--s2) var(--s3);
     margin-top:var(--s2);padding:10px 12px;
-    border:1px dashed var(--primary-border);border-radius:var(--radius-md);background:var(--primary-soft);
-    font-size:14px;
+    border:1px dashed var(--primary-border);border-radius:var(--r-md);background:var(--primary-soft);font-size:14px;
   }
 
   /* ============================================================
@@ -347,7 +270,7 @@
      ============================================================ */
   .btn{
     display:inline-flex;align-items:center;justify-content:center;gap:var(--s2);
-    min-height:40px;padding:8px 16px;border-radius:var(--radius-md);
+    min-height:40px;padding:8px 16px;border-radius:var(--r-md);
     border:1px solid transparent;font-size:14px;font-weight:600;white-space:nowrap;
     cursor:pointer;transition:background .15s,border-color .15s,color .15s,box-shadow .15s;
   }
@@ -362,42 +285,128 @@
   /* ============================================================
      REPORTS
      ============================================================ */
-  .filter-card{margin-bottom:var(--s5)}
+  .filter-card{margin-bottom:var(--s5);padding:var(--s5)}
   .filter-row{display:flex;flex-wrap:wrap;gap:var(--s3);justify-content:space-between;align-items:center;margin-top:var(--s4)}
   .report-range{font-size:13px;color:var(--text-muted);margin-bottom:var(--s4)}
-  .report-stack{display:grid;gap:var(--s5)}
-  .report-pair{display:grid;gap:var(--s5)}
 
-  .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s3)}
-  .kpi{padding:var(--s4);border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--shadow-1);min-width:0}
+  .kpis{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s3)}
+  .kpi{padding:var(--s4);border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--shadow-1);min-width:0}
   .kpi-label{display:block;font-size:12px;color:var(--text-muted);font-weight:500}
   .kpi-value{display:block;margin-top:var(--s1);font-size:26px;font-weight:650;line-height:1.1;font-variant-numeric:tabular-nums}
+  .kpi-sub{display:block;margin-top:var(--s1);font-size:12px;color:var(--text-muted)}
+
+  .chart-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s4);margin-top:var(--s5)}
+  .chart{padding:var(--s5)}
+  .chart.wide{grid-column:1 / -1}
+  .chart-head{margin-bottom:var(--s4)}
+  .chart-head h2{font-size:15px;font-weight:650}
+  .chart-head p{margin-top:2px}
+  .chart-fig{margin:0;min-width:0}
+  .chart-cap{margin-top:var(--s3);font-size:13px;color:var(--text-muted)}
+  .chart-empty{padding:var(--s6) 0;text-align:center;color:var(--text-muted);font-size:14px}
+
+  .cols{display:flex;align-items:flex-end;gap:4px;height:180px;overflow-x:auto;padding-bottom:2px}
+  .col{flex:1 1 0;min-width:14px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+  .col-val{height:18px;line-height:18px;font-size:11px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+  .cols.dense .col-val{visibility:hidden}
+  .col-bar{display:block;width:100%;max-width:32px;border-radius:4px 4px 0 0;background:var(--primary)}
+  .col-lbl{height:18px;line-height:18px;font-size:11px;color:var(--text-muted);white-space:nowrap}
+
+  .hbars{display:grid;gap:var(--s3)}
+  .hbars li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--s1) var(--s3);font-size:13px}
+  .hb-lbl{grid-column:1;grid-row:1;overflow-wrap:anywhere;color:var(--text-2)}
+  .hb-val{grid-column:2;grid-row:1;font-variant-numeric:tabular-nums;font-weight:600;text-align:right;white-space:nowrap}
+  .hb-val small{font-weight:400;color:var(--text-muted);margin-left:6px}
+  .hb-track{grid-column:1 / -1;grid-row:2;height:8px;border-radius:99px;background:var(--surface-sunken);overflow:hidden}
+  .hb-track i{display:block;height:100%;border-radius:inherit;background:var(--primary)}
+
+  .donut-wrap{display:flex;align-items:center;gap:var(--s5);flex-wrap:wrap}
+  .donut{width:140px;height:140px;flex:0 0 140px}
+  .d-track{fill:none;stroke:var(--surface-sunken);stroke-width:14}
+  .d-open,.d-closed{fill:none;stroke-width:14}
+  .d-open{stroke:var(--warning)}
+  .d-closed{stroke:var(--success)}
+  .d-total{font-size:20px;font-weight:650;fill:var(--text)}
+  .d-lbl{font-size:10px;fill:var(--text-muted)}
+  .legend{display:grid;gap:var(--s2);font-size:14px;flex:1;min-width:140px}
+  .legend li{display:flex;align-items:center;gap:var(--s2)}
+  .legend b{margin-left:auto;padding-left:var(--s4);font-variant-numeric:tabular-nums}
+  .sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .sw.open{background:var(--warning)}
+  .sw.closed{background:var(--success)}
 
   .card-title{font-size:15px;font-weight:650;margin-bottom:var(--s3)}
+  .section-card{padding:var(--s5);margin-top:var(--s5)}
+
+  .register-card{padding:0;margin-top:var(--s5);overflow:hidden}
+  .register-head{display:flex;flex-wrap:wrap;gap:var(--s3);align-items:center;justify-content:space-between;padding:var(--s4) var(--s5);border-bottom:1px solid var(--border)}
+  .register-head h2{font-size:15px;font-weight:650}
+  .toolbar{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center}
+  .sort-select{min-height:40px;width:auto;min-width:170px;font-size:14px;padding-top:6px;padding-bottom:6px}
+  .count{margin-top:2px;font-size:13px;color:var(--text-muted)}
+
+  .filters{border-bottom:1px solid var(--border);padding:0 var(--s5)}
+  .filters summary{list-style:none;cursor:pointer;min-height:44px;padding:var(--s3) 0;font-size:14px;font-weight:600;color:var(--text-2);display:flex;align-items:center;gap:var(--s2)}
+  .filters summary::-webkit-details-marker{display:none}
+  .filters summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid var(--text-muted);border-bottom:2px solid var(--text-muted);transform:rotate(45deg);transition:transform .15s}
+  .filters[open] summary::after{transform:rotate(-135deg)}
+  .filter-count{font-size:12px;font-weight:600;color:var(--primary-ink);background:var(--primary-soft);padding:1px 8px;border-radius:999px}
+  .filter-count:empty{display:none}
+  .filter-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s3);padding-bottom:var(--s4)}
+  .filter-grid .field-actions{display:flex;align-items:flex-end}
+
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+  .sub{display:block;font-size:12px;color:var(--text-muted)}
+  tbody tr[data-id]{cursor:pointer}
+  tbody tr[data-id]:hover td{background:var(--surface-muted)}
+  tbody tr[data-id]:focus-visible{outline:2px solid var(--primary);outline-offset:-2px}
+  .empty-inline{padding:var(--s6) var(--s4);text-align:center;color:var(--text-muted)}
+  .empty-inline b{display:block;color:var(--text-2);margin-bottom:var(--s2);font-weight:600}
+  .reg-foot{display:flex;justify-content:center;padding:var(--s3) var(--s4) var(--s4)}
+
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid transparent;white-space:nowrap}
+  .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+  .pill.open{color:var(--warning);background:var(--warning-soft);border-color:var(--warning-border)}
+  .pill.closed{color:var(--success);background:var(--success-soft);border-color:var(--success-border)}
+  .pill.repeat{color:var(--danger);background:var(--danger-soft);border-color:var(--danger-border)}
+
+  .empty{padding:var(--s8) var(--s5);text-align:center;color:var(--text-muted);border:1px dashed var(--border-strong);border-radius:var(--r-lg);background:var(--surface)}
+  .empty b{display:block;color:var(--text-2);font-weight:600;margin-bottom:var(--s1)}
+
   .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
   table{width:100%;border-collapse:collapse;font-size:14px}
   th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--border);vertical-align:top;overflow-wrap:anywhere}
   th{font-size:12px;font-weight:600;color:var(--text-muted);background:var(--surface-muted)}
   td{color:var(--text-2)}
 
-  .empty{
-    padding:var(--s8) var(--s5);text-align:center;color:var(--text-muted);
-    border:1px dashed var(--border-strong);border-radius:var(--radius-lg);background:var(--surface);
+  /* ============================================================
+     RECORD DIALOG
+     ============================================================ */
+  dialog.record-dialog{
+    border:0;border-radius:var(--r-lg);padding:0;width:min(92vw,560px);
+    box-shadow:var(--shadow-2);color:var(--text);background:var(--surface);
   }
-  .empty b{display:block;color:var(--text-2);font-weight:600;margin-bottom:var(--s1)}
+  dialog.record-dialog::backdrop{background:rgba(16,24,40,.45)}
+  .dlg-head{padding:var(--s4) var(--s5);border-bottom:1px solid var(--border)}
+  .dlg-head h2{font-size:16px;font-weight:650;overflow-wrap:anywhere}
+  .dlg-body{padding:var(--s4) var(--s5);max-height:70vh;overflow:auto}
+  .dl-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--s4) var(--s5)}
+  .dl-grid dt{font-size:12px;color:var(--text-muted);font-weight:500}
+  .dl-grid dd{margin:2px 0 0;font-size:14px;overflow-wrap:anywhere}
+  .dlg-foot{display:flex;justify-content:flex-end;padding:var(--s3) var(--s5);border-top:1px solid var(--border);background:var(--surface-muted)}
 
   /* ============================================================
      TOAST
      ============================================================ */
   .toast{
-    position:fixed;left:50%;top:calc(var(--s4) + env(safe-area-inset-top,0px));z-index:60;
+    position:fixed;left:50%;top:calc(var(--s4) + env(safe-area-inset-top,0px));z-index:70;
     width:min(92vw,400px);transform:translate(-50%,-160%);
     transition:transform .2s var(--ease);pointer-events:none;
   }
   .toast.show{transform:translate(-50%,0)}
   .toast-inner{
     display:flex;align-items:flex-start;gap:var(--s3);
-    padding:12px 14px;border-radius:var(--radius-md);
+    padding:12px 14px;border-radius:var(--r-md);
     background:var(--text);color:#fff;font-size:14px;font-weight:500;box-shadow:var(--shadow-2);
   }
   .toast.err .toast-inner{background:var(--danger)}
@@ -407,99 +416,26 @@
   .toast.err .ico-ok{display:none}
 
   /* ============================================================
-     BREAKPOINTS
+     TABLET (720px and up)
      ============================================================ */
-
-  /* Phone (below 720px) */
-  @media (max-width:719px){
-    h1{font-size:20px}
-    .page-lede{display:none}
-
-    /* Room for the tab bar and the fixed action bar, so the last field is never hidden */
-    .content{
-      padding:var(--s4) var(--s4) calc(var(--nav-h) + var(--actionbar-h) + var(--s6) + env(safe-area-inset-bottom,0px));
-    }
-    .crumbs .crumb-root,.crumbs .crumb-sep{display:none}
-
-    /* Toasts sit below the top bar so they never cover the title or buttons */
-    .toast{top:calc(var(--topbar-h) + var(--s3) + env(safe-area-inset-top,0px))}
-
-    .bottom-nav{display:grid}
-
-    .card{padding:var(--s4)}
-    .step{display:none;padding:var(--s4)}
-    .step.active{display:block;animation:stepIn .2s var(--ease)}
-    .step.active.back{animation-name:stepBack}
-    @keyframes stepIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
-    @keyframes stepBack{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
-    .step-title{font-size:17px}
-
-    .form-progress{padding:var(--s3) var(--s4) var(--s2)}
-    .steps{gap:var(--s2)}
-    .steps-btn{font-size:12px;gap:var(--s1);justify-content:center;flex-direction:column;text-align:center}
-
-    /* Fixed action bar sits directly above the tab bar */
-    .form-actions{
-      position:fixed;left:0;right:0;
-      bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));
-      z-index:25;min-height:var(--actionbar-h);
-      padding:var(--s3) var(--s4);
-      border-radius:0;border-top:1px solid var(--border);
-      box-shadow:0 -4px 16px rgba(16,24,40,.06);
-    }
-    .form-actions .form-note{display:none}
-
-    /* Back takes a fixed width; Continue fills the rest. When Back is hidden,
-       Continue takes the full width instead of leaving an empty column. */
-    .form-actions .btn-group{flex:1;display:flex;gap:var(--s2);flex-wrap:nowrap}
-    .form-actions #backBtn{flex:0 0 96px}
-    .form-actions #nextBtn{flex:1}
-    .form-actions .btn{min-height:46px;white-space:normal}
-
-    .guide{display:none}
-    .metrics{gap:var(--s2)}
-    .metric dd{font-size:20px}
-
-    .kpis{gap:var(--s2)}
-    .kpi{padding:var(--s3)}
-    .kpi-value{font-size:22px}
-
-    .fields{grid-template-columns:minmax(0,1fr)}
-    .filter-row .btn-group{width:100%}
-    .filter-row .btn-group .btn{flex:1}
-
-    input:not([type="checkbox"]),select,textarea{min-height:48px}
-    .chip{min-height:44px}
-
-    table.stack thead{display:none}
-    table.stack,table.stack tbody,table.stack tr,table.stack td{display:block;width:100%}
-    table.stack tr{
-      border:1px solid var(--border);border-radius:var(--radius-md);
-      padding:var(--s3);margin-bottom:var(--s3);background:var(--surface);
-    }
-    table.stack td{display:flex;justify-content:space-between;gap:var(--s4);padding:6px 0;border:0}
-    table.stack td::before{content:attr(data-label);flex:0 0 auto;font-size:13px;font-weight:500;color:var(--text-muted)}
-    table.stack td[colspan]{display:block;text-align:center}
-    table.stack td[colspan]::before{content:none}
-  }
-
-  /* Tablet (720px to 1023px) */
   @media (min-width:720px){
     .top-nav{display:flex}
     .content{padding:var(--s6) var(--s6) var(--s8)}
     .step{padding:var(--s5) var(--s6)}
-    .form-progress{display:none}
     .fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4) var(--s5)}
-    .metrics{gap:var(--s3)}
-    .metric dd{font-size:24px}
-    .kpis{gap:var(--s4)}
+    .kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s4)}
     .kpi{padding:var(--s5)}
     .kpi-value{font-size:28px}
-    .report-pair{grid-template-columns:1fr 1fr}
-    .chips.scroll{flex-wrap:wrap;overflow:visible}
-
-    .form-actions .btn-group{justify-content:flex-end;flex:initial}
+    .chart-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s5)}
+    .chart{padding:var(--s6)}
+    .chart.wide{grid-column:1 / -1}
+    .chips.scroll{flex-wrap:wrap;overflow:visible;padding:0;margin:0}
+    .filter-grid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:end}
+    .filters{padding:0 var(--s5)}
+    .sort-select{min-width:180px;flex:0 0 auto}
+    .register-head{padding:var(--s4) var(--s5)}
     .form-actions .btn{min-width:140px}
+    .dl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 
     table.stack thead{display:table-header-group}
     table.stack,table.stack tbody{display:table-row-group}
@@ -509,9 +445,11 @@
     table.stack td[colspan]{text-align:center}
   }
 
-  /* Desktop (1024px and up): sidebar shell */
+  /* ============================================================
+     DESKTOP (1024px and up)
+     ============================================================ */
   @media (min-width:1024px){
-    .app{grid-template-columns:248px minmax(0,1fr)}
+    .app{grid-template-columns:240px minmax(0,1fr)}
     .sidebar{
       display:flex;flex-direction:column;gap:var(--s6);
       position:sticky;top:0;height:100vh;padding:var(--s5) var(--s3);
@@ -525,24 +463,91 @@
     .top-nav{display:none}
     .topbar-title .brand-mark{display:none}
     .crumbs .crumb-root,.crumbs .crumb-sep{display:inline}
+    .hbars li{grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto;gap:var(--s3)}
+    .hb-lbl{grid-column:1;grid-row:1}
+    .hb-track{grid-column:2;grid-row:1;height:8px;align-self:center}
+    .hb-val{grid-column:3;grid-row:1}
+    .kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
   }
 
-  /* Wide desktop (1100px and up): form plus guidance side by side */
-  @media (min-width:1100px){
-    .record-layout{grid-template-columns:minmax(0,1fr) 340px}
-    .guide{display:block;position:sticky;top:calc(var(--topbar-h) + var(--s5))}
-    .guide-head h2{font-size:15px}
+  /* ============================================================
+     PHONE (below 720px)
+     ============================================================ */
+  @media (max-width:719px){
+    h1{font-size:19px}
+    .page-lede{display:none}
+    .crumbs .crumb-root,.crumbs .crumb-sep{display:none}
+    .content{
+      padding:var(--s3) var(--s3) calc(var(--tabbar-h) + var(--actionbar-h) + var(--s5) + env(safe-area-inset-bottom,0px));
+    }
+    .toast{top:calc(var(--topbar-h) + var(--s2) + env(safe-area-inset-top,0px))}
+    .bottom-nav{display:grid}
+
+    .phone-progress{display:block;padding:var(--s3) var(--s4) 0}
+    .phone-progress .progress{margin-top:var(--s2)}
+    .step{display:none;padding:var(--s4)}
+    .step.active{display:block;animation:stepIn .22s var(--ease)}
+    .step.active.back{animation-name:stepBack}
+    @keyframes stepIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+    @keyframes stepBack{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+    .step-count{display:block}
+    .step-title{font-size:17px;margin-bottom:var(--s3)}
+    .fields{gap:var(--s3)}
+
+    /* One action bar, sitting directly above the tab bar */
+    .form-actions{
+      position:fixed;left:0;right:0;
+      bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom,0px));
+      z-index:25;min-height:var(--actionbar-h);padding:var(--s2) var(--s3);
+      border-radius:0;border-top:1px solid var(--border);
+      box-shadow:0 -6px 18px rgba(16,24,40,.07);background:var(--surface);
+    }
+    .form-actions .form-note{display:none}
+    .form-actions .btn-group{flex:1;width:100%;margin-left:0}
+    .form-actions .btn{min-height:46px;flex:1}
+    #backBtn:not([hidden]){flex:0 0 104px}
+
+    .chips.scroll .chip{min-height:40px}
+    .policy{padding:var(--s3)}
+
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s2)}
+    .kpi{padding:var(--s3)}
+    .kpi-value{font-size:20px}
+    .kpi:last-child:nth-child(odd){grid-column:1 / -1}
+    .chart{padding:var(--s4)}
+    .cols{height:150px}
+    .section-card{padding:var(--s4)}
+    .filter-card{padding:var(--s4)}
+    .filter-row .btn-group{width:100%}
+    .filter-row .btn-group .btn{flex:1}
+    .register-head{padding:var(--s4)}
+    .filters{padding:0 var(--s4)}
+    .sort-select{min-width:0;flex:1}
+    .dl-grid{grid-template-columns:minmax(0,1fr)}
+
+    input:not([type="checkbox"]),select,textarea{min-height:48px}
+
+    table.stack thead{display:none}
+    table.stack,table.stack tbody,table.stack tr,table.stack td{display:block;width:100%}
+    table.stack tr{
+      border:1px solid var(--border);border-radius:var(--r-md);
+      padding:var(--s3);margin-bottom:var(--s3);background:var(--surface);
+    }
+    table.stack td{display:flex;justify-content:space-between;gap:var(--s4);padding:5px 0;border:0}
+    table.stack td::before{content:attr(data-label);flex:0 0 auto;font-size:12px;font-weight:500;color:var(--text-muted)}
+    table.stack td[colspan]{display:block;text-align:center}
+    table.stack td[colspan]::before{content:none}
   }
 
-  /* Print: reports only */
   @media print{
-    .sidebar,.topbar,.bottom-nav,.toast,.filter-card,#viewRecord{display:none !important}
+    .sidebar,.topbar,.bottom-nav,.toast,.no-print,.filter-card,.chart-grid,.filters,.toolbar,.reg-foot,#viewRecord,dialog{display:none !important}
     .content{padding:0;max-width:none}
     body{background:#fff}
     .card{border:0;box-shadow:none;padding:0}
+    .table-wrap{overflow:visible}
+    table{font-size:11px}
   }
 
-  /* Reduced motion: no transitions or animation */
   @media (prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
   }
@@ -612,182 +617,148 @@
           <p class="page-lede">Log a breach of the mobile phone restriction. The policy action updates as you enter the details.</p>
         </header>
 
-        <div class="record-layout">
+        <form id="vform" class="card form-card" novalidate>
 
-          <form id="vform" class="card form-card" novalidate>
+          <div class="phone-progress" aria-hidden="true">
+            <div class="progress"><i id="progressBar"></i></div>
+          </div>
 
-            <div class="form-progress">
-              <ol class="steps" id="stepper" aria-label="Progress">
-                <li data-s="1" class="active">
-                  <button type="button" class="steps-btn" data-s="1" aria-current="step"><span class="step-num">1</span><span>Who</span></button>
-                </li>
-                <li data-s="2">
-                  <button type="button" class="steps-btn" data-s="2" disabled><span class="step-num">2</span><span>Where</span></button>
-                </li>
-                <li data-s="3">
-                  <button type="button" class="steps-btn" data-s="3" disabled><span class="step-num">3</span><span>Outcome</span></button>
-                </li>
-              </ol>
-              <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
-            </div>
+          <!-- Step 1: Who -->
+          <section class="step active" data-step="1" aria-labelledby="h-step1">
+            <p class="step-count">Step 1 of 3</p>
+            <h2 class="step-title" id="h-step1">Who was it?</h2>
 
-            <!-- Step 1: Who -->
-            <section class="step active" data-step="1" aria-labelledby="h-step1">
-              <h2 class="step-title" id="h-step1"><span class="step-num">1</span>Who was it?</h2>
+            <div class="fields">
+              <fieldset class="wide">
+                <legend id="typeLabel" class="req">Person type</legend>
+                <div class="chips scroll" id="personChips" role="radiogroup" aria-labelledby="typeLabel"></div>
+              </fieldset>
 
-              <div class="fields">
-                <fieldset class="wide">
-                  <legend id="typeLabel" class="req">Person type</legend>
-                  <div class="chips scroll" id="personChips" role="radiogroup" aria-labelledby="typeLabel"></div>
-                </fieldset>
+              <div class="field" id="cardSec">
+                <label for="cardNo" class="req">Card No</label>
+                <input id="cardNo" inputmode="numeric" autocomplete="off" aria-describedby="cardHint err-cardNo">
+                <p class="hint" id="cardHint"></p>
+                <p class="field-error" id="err-cardNo"></p>
+              </div>
 
-                <div class="field" id="cardSec">
-                  <label for="cardNo" class="req">Card No</label>
-                  <input id="cardNo" inputmode="numeric" autocomplete="off" aria-describedby="cardHint err-cardNo">
-                  <p class="hint" id="cardHint"></p>
-                  <p class="field-error" id="err-cardNo"></p>
-                </div>
-
-                <div class="field">
-                  <label for="name" class="req">Name</label>
-                  <input id="name" autocomplete="off" aria-describedby="err-name">
-                  <div class="policy" id="namePolicy" hidden>
+              <div class="field">
+                <label for="name" class="req">Name</label>
+                <input id="name" autocomplete="off" aria-describedby="err-name">
+                <div class="policy" id="namePolicy" hidden>
+                  <div class="policy-top">
                     <span class="policy-tag" id="plTag">Policy action</span>
-                    <span class="policy-action" id="plAction"></span>
                     <span class="policy-nature" id="plNature"></span>
                   </div>
-                  <p class="field-error" id="err-name"></p>
+                  <p class="policy-action" id="plAction"></p>
+                  <p class="policy-text" id="plText"></p>
+                  <ul class="policy-notes" id="plNotes"></ul>
                 </div>
-
-                <div class="field" id="sectionSec">
-                  <label for="section" class="req">Section</label>
-                  <input id="section" list="sectionList" autocomplete="off" aria-describedby="err-section">
-                  <datalist id="sectionList"></datalist>
-                  <p class="field-error" id="err-section"></p>
-                </div>
-
-                <div class="field" id="companySec" hidden>
-                  <label for="company" id="companyLabel" class="req">Company</label>
-                  <input id="company" list="companyList" autocomplete="off" aria-describedby="err-company">
-                  <datalist id="companyList"></datalist>
-                  <div id="similarBox"></div>
-                  <p class="field-error" id="err-company"></p>
-                </div>
-
-                <div class="field" id="supervisorSec" hidden>
-                  <label for="supervisor" id="supLabel">Responsible supervisor</label>
-                  <input id="supervisor" autocomplete="off" aria-describedby="err-supervisor">
-                  <p class="field-error" id="err-supervisor"></p>
-                </div>
-
-                <div class="field wide" id="hostSec" hidden>
-                  <label for="hostCard">Person visited <span class="muted">(optional)</span></label>
-                  <input id="hostCard" autocomplete="off" placeholder="Name or card no of the employee visited">
-                </div>
-              </div>
-            </section>
-
-            <!-- Step 2: Where and what -->
-            <section class="step" data-step="2" aria-labelledby="h-step2">
-              <h2 class="step-title" id="h-step2"><span class="step-num">2</span>Where and what?</h2>
-
-              <div class="fields">
-                <div class="field">
-                  <label for="area" class="req">Area where phone was found</label>
-                  <input id="area" list="areaList" autocomplete="off" placeholder="Choose or type an area" aria-describedby="err-area">
-                  <datalist id="areaList"></datalist>
-                  <p class="field-error" id="err-area"></p>
-                </div>
-
-                <div class="field">
-                  <label for="activity" class="req">Activity</label>
-                  <input id="activity" list="activityList" autocomplete="off" placeholder="Choose or type an activity" aria-describedby="err-activity">
-                  <datalist id="activityList"></datalist>
-                  <p class="field-error" id="err-activity"></p>
-                </div>
-
-                <fieldset class="wide">
-                  <legend id="srcLabel" class="req">How it was detected</legend>
-                  <div class="chips" id="sourceChips" role="radiogroup" aria-labelledby="srcLabel"></div>
-                  <p class="field-error" id="err-sourceChips"></p>
-                </fieldset>
-
-                <div class="field wide">
-                  <label for="remarks">Remarks <span class="muted">(optional)</span></label>
-                  <textarea id="remarks"></textarea>
-                </div>
-              </div>
-            </section>
-
-            <!-- Step 3: Outcome -->
-            <section class="step" data-step="3" aria-labelledby="h-step3">
-              <h2 class="step-title" id="h-step3"><span class="step-num">3</span>Outcome</h2>
-
-              <div class="recap">
-                <div class="avatar" id="rAvatar" aria-hidden="true">?</div>
-                <div class="recap-main">
-                  <b id="rName">No person yet</b>
-                  <span id="rMeta">Go back and enter who it was</span>
-                </div>
-                <div class="recap-count"><b id="rCount">1</b>violation</div>
+                <p class="field-error" id="err-name"></p>
               </div>
 
-              <div class="policy" id="outPolicy" hidden>
+              <div class="field" id="sectionSec">
+                <label for="section" class="req">Section</label>
+                <input id="section" list="sectionList" autocomplete="off" aria-describedby="err-section">
+                <datalist id="sectionList"></datalist>
+                <p class="field-error" id="err-section"></p>
+              </div>
+
+              <div class="field" id="companySec" hidden>
+                <label for="company" id="companyLabel" class="req">Company</label>
+                <input id="company" list="companyList" autocomplete="off" aria-describedby="err-company">
+                <datalist id="companyList"></datalist>
+                <div id="similarBox"></div>
+                <p class="field-error" id="err-company"></p>
+              </div>
+
+              <div class="field" id="supervisorSec" hidden>
+                <label for="supervisor" id="supLabel">Responsible supervisor</label>
+                <input id="supervisor" autocomplete="off" aria-describedby="err-supervisor">
+                <p class="field-error" id="err-supervisor"></p>
+              </div>
+
+              <div class="field wide" id="hostSec" hidden>
+                <label for="hostCard">Person visited <span class="muted">(optional)</span></label>
+                <input id="hostCard" autocomplete="off" placeholder="Name or card no of the employee visited">
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 2: Where and what -->
+          <section class="step" data-step="2" aria-labelledby="h-step2">
+            <p class="step-count">Step 2 of 3</p>
+            <h2 class="step-title" id="h-step2">Where and what?</h2>
+
+            <div class="fields">
+              <div class="field">
+                <label for="area" class="req">Area where phone was found</label>
+                <input id="area" list="areaList" autocomplete="off" placeholder="Choose or type an area" aria-describedby="err-area">
+                <datalist id="areaList"></datalist>
+                <p class="field-error" id="err-area"></p>
+              </div>
+
+              <div class="field">
+                <label for="activity" class="req">Activity</label>
+                <input id="activity" list="activityList" autocomplete="off" placeholder="Choose or type an activity" aria-describedby="err-activity">
+                <datalist id="activityList"></datalist>
+                <p class="field-error" id="err-activity"></p>
+              </div>
+
+              <fieldset class="wide">
+                <legend id="srcLabel" class="req">How it was detected</legend>
+                <div class="chips" id="sourceChips" role="radiogroup" aria-labelledby="srcLabel"></div>
+                <p class="field-error" id="err-sourceChips"></p>
+              </fieldset>
+
+              <div class="field wide">
+                <label for="remarks">Remarks <span class="muted">(optional)</span></label>
+                <textarea id="remarks"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 3: Outcome -->
+          <section class="step" data-step="3" aria-labelledby="h-step3">
+            <p class="step-count">Step 3 of 3</p>
+            <h2 class="step-title" id="h-step3">Outcome</h2>
+
+            <div class="recap">
+              <div class="avatar" id="rAvatar" aria-hidden="true">?</div>
+              <div class="recap-main">
+                <b id="rName">No person yet</b>
+                <span id="rMeta">Go back and enter who it was</span>
+              </div>
+              <div class="recap-count"><b id="rCount">1</b>violation</div>
+            </div>
+
+            <div class="policy" id="outPolicy" hidden>
+              <div class="policy-top">
                 <span class="policy-tag" id="opTag">Policy action</span>
-                <span class="policy-action" id="opAction"></span>
                 <span class="policy-nature" id="opNature"></span>
               </div>
-
-              <div class="fields" style="margin-top:var(--s4)">
-                <div class="field wide">
-                  <label for="action" class="req">Action taken</label>
-                  <input id="action" list="actionList" autocomplete="off" placeholder="Choose or type an action" aria-describedby="err-action">
-                  <datalist id="actionList"></datalist>
-                  <p class="field-error" id="err-action"></p>
-                </div>
-
-                <div class="field">
-                  <label for="status" class="req">Status</label>
-                  <select id="status">
-                    <option>Open</option>
-                    <option>Closed</option>
-                  </select>
-                </div>
-              </div>
-            </section>
-
-            <footer class="form-actions">
-              <p class="form-note muted">Saves to the violation register</p>
-              <div class="btn-group">
-                <button type="button" class="btn btn-secondary" id="backBtn" hidden>Back</button>
-                <button type="submit" class="btn btn-primary" id="nextBtn">Continue</button>
-              </div>
-            </footer>
-          </form>
-
-          <aside class="card guide" id="guide" aria-labelledby="guideTitle" aria-live="polite">
-            <div class="guide-head">
-              <span class="badge">Policy</span>
-              <h2 id="guideTitle">Guidance</h2>
+              <p class="policy-action" id="opAction"></p>
+              <p class="policy-text" id="opText"></p>
+              <ul class="policy-notes" id="opNotes"></ul>
             </div>
 
-            <dl class="metrics">
-              <div class="metric"><dt>Earlier</dt><dd id="gPrior">0</dd></div>
-              <div class="metric"><dt>This one</dt><dd id="gOcc">1</dd></div>
-              <div class="metric"><dt>Area level</dt><dd id="gLevel" class="metric-text">—</dd></div>
-            </dl>
-            <p class="muted" id="gLast"></p>
-
-            <div class="nature" id="gNatureBox" hidden>
-              <p class="eyebrow">Nature of violation</p>
-              <p class="nature-name" id="gNature"></p>
-              <p class="nature-text" id="gText"></p>
+            <div class="fields" style="margin-top:var(--s4)">
+              <div class="field wide">
+                <label for="action" class="req">Action taken</label>
+                <input id="action" list="actionList" autocomplete="off" placeholder="Choose or type an action" aria-describedby="err-action">
+                <datalist id="actionList"></datalist>
+                <p class="field-error" id="err-action"></p>
+              </div>
             </div>
+          </section>
 
-            <p class="guide-action" id="gAction">Enter the person to see the suggested action.</p>
-            <ul class="notes" id="gNotes"></ul>
-          </aside>
-        </div>
+          <footer class="form-actions">
+            <p class="form-note muted">Saves to the violation register as Open</p>
+            <div class="btn-group">
+              <button type="button" class="btn btn-secondary" id="backBtn" hidden>Back</button>
+              <button type="submit" class="btn btn-primary" id="nextBtn">Continue</button>
+            </div>
+          </footer>
+        </form>
       </section>
 
       <!-- ===== REPORTS ===== -->
@@ -795,7 +766,7 @@
         <header class="page-head">
           <p class="eyebrow">Analysis</p>
           <h1 id="reportTitle">Violation reports</h1>
-          <p class="page-lede">Totals, repeat offenders and records for any date range.</p>
+          <p class="page-lede">Totals, trends, and the full register for any date range.</p>
         </header>
 
         <div class="card filter-card">
@@ -846,6 +817,15 @@
     <span>Reports</span>
   </button>
 </nav>
+
+<!-- Record detail dialog -->
+<dialog id="recDialog" class="record-dialog" aria-labelledby="dlgTitle">
+  <div class="dlg-head"><h2 id="dlgTitle"></h2></div>
+  <div class="dlg-body"><dl class="dl-grid" id="dlgFields"></dl></div>
+  <form method="dialog" class="dlg-foot">
+    <button type="submit" class="btn btn-primary" value="close">Close</button>
+  </form>
+</dialog>
 
 <div id="toast" class="toast" role="status" aria-live="polite">
   <div class="toast-inner">
@@ -905,10 +885,9 @@ const NATURE = {
   ai: { name: 'AI-detected violation', text: 'No preliminary warning. Verify the alert, then start disciplinary proceedings directly per Company Rules.', action: 'Direct disciplinary (AI-detected)' }
 };
 
-// Fields that can show an inline error
 const ERROR_IDS = ['name', 'cardNo', 'section', 'company', 'supervisor', 'area', 'activity', 'sourceChips', 'action'];
 
-const state = { prior: 0, lastDate: null, actionTouched: false, lastNature: '', step: 1 };
+const state = { prior: 0, lastDate: null, actionTouched: false, step: 1 };
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const phoneMQ = matchMedia('(max-width: 719px)');
 const isPhone = () => phoneMQ.matches;
@@ -916,6 +895,21 @@ const isPhone = () => phoneMQ.matches;
 // Cards already recorded in the violation register, loaded when the page
 // opens. Kept in memory only, never in localStorage.
 const LOOKUP = { people: new Map(), ready: null };
+
+// Report data for the current date range
+const REG = { rows: [], filtered: [], meta: {}, page: 1, lastTrigger: null };
+const PAGE_SIZE = 25;
+const DONUT_R = 46;
+const DONUT_C = 2 * Math.PI * DONUT_R;
+
+const SORTS = {
+  'date-desc':  (a, b) => b.dateTime.localeCompare(a.dateTime),
+  'date-asc':   (a, b) => a.dateTime.localeCompare(b.dateTime),
+  'name-asc':   (a, b) => a.name.localeCompare(b.name),
+  'area-asc':   (a, b) => a.area.localeCompare(b.area),
+  'status-asc': (a, b) => a.status.localeCompare(b.status),
+  'occ-desc':   (a, b) => b.occurrence - a.occurrence
+};
 
 // ============================================================
 // API
@@ -955,13 +949,6 @@ function canon(value, options) {
   if (exact) return exact;
   const starts = options.find(o => o.toLowerCase().startsWith(v));
   return starts || String(value).trim();
-}
-
-function areaLevel(a) {
-  if (!a) return '—';
-  if (LEVEL2.has(a)) return 'Level 2';
-  if (LEVEL1.has(a)) return 'Level 1';
-  return 'Unclassified';
 }
 
 function setHint(el, text, bad = false) {
@@ -1097,7 +1084,7 @@ function buildChips(containerId, values, initial, onChange) {
     b.textContent = v;
     b.setAttribute('aria-checked', v === initial ? 'true' : 'false');
     b.addEventListener('click', () => {
-      if (b.getAttribute('aria-checked') === 'true') return; // no change, nothing to reset
+      if (b.getAttribute('aria-checked') === 'true') return;
       selectChip(containerId, b);
       setFieldError(containerId, '');
       if (onChange) onChange(v);
@@ -1118,8 +1105,7 @@ function buildChips(containerId, values, initial, onChange) {
 }
 
 function selectChip(containerId, btn) {
-  const c = $(containerId);
-  c.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-checked', 'false'));
+  $(containerId).querySelectorAll('.chip').forEach(x => x.setAttribute('aria-checked', 'false'));
   btn.setAttribute('aria-checked', 'true');
   syncRadio(containerId);
 }
@@ -1156,26 +1142,14 @@ function goStep(n, back = false) {
     s.classList.toggle('active', on);
     s.classList.toggle('back', on && back);
   });
-  document.querySelectorAll('#stepper li').forEach(li => {
-    const s = Number(li.dataset.s);
-    li.classList.toggle('active', s === n);
-    li.classList.toggle('done', s < n);
-  });
-  document.querySelectorAll('.steps-btn').forEach(b => {
-    const s = Number(b.dataset.s);
-    b.disabled = s > n;
-    if (s === n) b.setAttribute('aria-current', 'step');
-    else b.removeAttribute('aria-current');
-  });
   $('progressBar').style.width = (n / 3 * 100) + '%';
   updateActionBar();
   if (isPhone()) window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
 }
 
 function updateActionBar() {
-  const phone = isPhone();
-  $('backBtn').hidden = !(phone && state.step > 1);
-  $('nextBtn').textContent = (phone && state.step < 3) ? 'Continue' : 'Save record';
+  $('backBtn').hidden = !(isPhone() && state.step > 1);
+  $('nextBtn').textContent = (isPhone() && state.step < 3) ? 'Continue' : 'Save record';
 }
 
 phoneMQ.addEventListener('change', () => goStep(isPhone() ? state.step : 1));
@@ -1224,7 +1198,8 @@ function applyPersonType() {
   const trainee = t === 'Trainee / apprentice';
 
   $('cardSec').hidden = visitor;
-  $('sectionSec').hidden = visitor;
+  $('sectionSec') && ($('sectionSec').hidden = visitor);
+  $('section').closest('.field').hidden = visitor;
   $('companySec').hidden = !(contractor || visitor);
   $('companyLabel').textContent = visitor ? 'Visitor company' : 'Contractor company';
   $('supervisorSec').hidden = !(contractor || trainee);
@@ -1242,8 +1217,7 @@ function resetPerson() {
   state.prior = 0;
   state.lastDate = null;
   state.actionTouched = false;
-  state.lastNature = '';
-  renderGuide();
+  renderPolicy();
 }
 
 // ============================================================
@@ -1255,7 +1229,7 @@ async function onCardChange() {
   if (!card) {
     setHint($('cardHint'), '');
     state.prior = 0; state.lastDate = null;
-    return renderGuide();
+    return renderPolicy();
   }
   setLoading(input, true);
   setHint($('cardHint'), 'Checking the register…');
@@ -1333,7 +1307,7 @@ async function loadHistory() {
   }
   if (!params) {
     state.prior = 0; state.lastDate = null;
-    return renderGuide();
+    return renderPolicy();
   }
   try {
     const h = await api('personHistory', params);
@@ -1342,7 +1316,7 @@ async function loadHistory() {
   } catch (e) {
     state.prior = 0; state.lastDate = null;
   }
-  renderGuide();
+  renderPolicy();
 }
 
 // ============================================================
@@ -1385,61 +1359,46 @@ function suggest(t, n, source, activity, area) {
   return { nature: primary, notes };
 }
 
-function fillPolicy(prefix, s, n) {
+function fillPolicy(prefix, s, n, extraNotes) {
   const wrap = $(prefix === 'pl' ? 'namePolicy' : 'outPolicy');
   wrap.hidden = false;
   wrap.classList.toggle('repeat', !!s.nature.repeat);
   $(prefix + 'Tag').textContent = s.nature.repeat ? 'Repeat' : 'Policy action';
-  $(prefix + 'Action').textContent = s.nature.action;
   $(prefix + 'Nature').textContent = s.nature.name + (n > 1 ? ` · violation ${n}` : '');
+  $(prefix + 'Action').textContent = s.nature.action;
+  $(prefix + 'Text').textContent = s.nature.text;
+  $(prefix + 'Notes').innerHTML = [...extraNotes, ...s.notes]
+    .map(x => `<li class="${esc(x.tone || '')}">${esc(x.text)}</li>`).join('');
 }
 
-function renderGuide() {
+// Updates the policy blocks and the Outcome summary from the current entries
+function renderPolicy() {
   const t = currentType();
   const n = state.prior + 1;
   const area = canon($('area').value, ALL_AREAS);
   const activity = canon($('activity').value, ACTIVITIES);
   const name = $('name').value.trim();
-  const hasPerson = name !== '';
 
-  countUp($('gPrior'), state.prior);
-  countUp($('gOcc'), n);
-  $('gLevel').textContent = areaLevel(area);
-  $('gLast').textContent = state.lastDate
-    ? 'Last recorded ' + new Date(state.lastDate).toLocaleDateString()
-    : (state.prior ? '' : 'No earlier violations on record.');
-
-  // Summary card on the Outcome step
   $('rAvatar').textContent = initials(name);
   $('rName').textContent = name || 'No person yet';
   const meta = [t, $('section').value.trim() || $('company').value.trim()].filter(Boolean).join(' · ');
-  $('rMeta').textContent = hasPerson ? meta : 'Go back and enter who it was';
+  $('rMeta').textContent = name ? meta : 'Go back and enter who it was';
   $('rCount').textContent = n;
 
-  const box = $('gNatureBox');
-  if (!hasPerson) {
+  if (!name) {
     $('namePolicy').hidden = true;
     $('outPolicy').hidden = true;
-    box.hidden = true;
-    $('gAction').textContent = 'Enter the person to see the suggested action.';
-    $('gNotes').innerHTML = '';
-    state.lastNature = '';
     return;
   }
 
   const s = suggest(t, n, chipValue('sourceChips'), activity, area);
-  fillPolicy('pl', s, n);
-  fillPolicy('op', s, n);
+  const areaNote = LEVEL2.has(area) ? [] : [];
+  const history = state.lastDate
+    ? [{ tone: 'muted-note', text: `Last recorded ${new Date(state.lastDate).toLocaleDateString()}` }]
+    : (state.prior ? [] : [{ tone: 'muted-note', text: 'No earlier violations on record' }]);
 
-  box.hidden = false;
-  box.classList.toggle('repeat', !!s.nature.repeat);
-  $('gNature').textContent = s.nature.name;
-  $('gText').textContent = s.nature.text;
-  $('gAction').textContent = 'Suggested action: ' + s.nature.action;
-  $('gNotes').innerHTML = s.notes
-    .map(x => `<li class="${esc(x.tone || '')}">${esc(x.text)}</li>`).join('');
-
-  state.lastNature = s.nature.name;
+  fillPolicy('pl', s, n, history.concat(areaNote));
+  fillPolicy('op', s, n, []);
   if (!state.actionTouched) $('action').value = s.nature.action;
 }
 
@@ -1483,8 +1442,7 @@ async function onSubmit(e) {
     area: canon($('area').value, ALL_AREAS),
     activity: canon($('activity').value, ACTIVITIES),
     remarks: $('remarks').value.trim(),
-    actionTaken: canon($('action').value, ACTIONS),
-    status: $('status').value
+    actionTaken: canon($('action').value, ACTIONS)
   };
 
   const btn = $('nextBtn');
@@ -1510,58 +1468,462 @@ async function onSubmit(e) {
 }
 
 // ============================================================
-// REPORTS
+// REPORT DATA
+// ============================================================
+// Maps a server row to the fields the register and charts use
+function normRow(r) {
+  return {
+    id: String(r.recordId || ''),
+    dateTime: String(r.dateTime || ''),
+    personType: String(r.personType || ''),
+    name: String(r.name || ''),
+    cardNo: String(r.cardNo || ''),
+    company: String(r.company || ''),
+    supervisor: String(r.supervisor || ''),
+    section: String(r.section || ''),
+    area: String(r.area || ''),
+    activity: String(r.activity || ''),
+    source: String(r.source || ''),
+    occurrence: Number(r.occurrence) || 0,
+    action: String(r.action || ''),
+    status: String(r.status || ''),
+    remarks: String(r.remarks || ''),
+    hostCard: String(r.hostCard || ''),
+    officer: String(r.officer || '')
+  };
+}
+
+function passes(r, f) {
+  if (f.personType && r.personType !== f.personType) return false;
+  if (f.area && r.area !== f.area) return false;
+  if (f.source && r.source !== f.source) return false;
+  if (f.status && r.status !== f.status) return false;
+  if (f.action && r.action !== f.action) return false;
+  if (f.q) {
+    const hay = [r.name, r.cardNo, r.company, r.id, r.area, r.action, r.section, r.supervisor].join(' ').toLowerCase();
+    if (!hay.includes(f.q)) return false;
+  }
+  return true;
+}
+
+// Top categories for the bar charts, largest first
+function countBy(rows, key) {
+  const m = new Map();
+  rows.forEach(r => {
+    const k = r[key] || 'Not recorded';
+    m.set(k, (m.get(k) || 0) + 1);
+  });
+  return [...m.entries()]
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => b.value - a.value || a.label.localeCompare(b.label))
+    .slice(0, 8);
+}
+
+// Days (or months, for long ranges) between start and end, with counts
+function trendBuckets(rows, start, end, monthly) {
+  const s = new Date(start + 'T00:00:00'), e = new Date(end + 'T00:00:00');
+  const map = new Map();
+  const keyOf = d => monthly ? `${d.getFullYear()}-${d.getMonth()}` : iso(d);
+  const labelOf = d => monthly
+    ? d.toLocaleDateString(undefined, { month: 'short', year: '2-digit' })
+    : d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+
+  for (let d = new Date(s); d <= e; d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)) {
+    const k = keyOf(d);
+    if (!map.has(k)) map.set(k, { label: labelOf(d), value: 0 });
+  }
+  rows.forEach(r => {
+    const d = new Date(r.dateTime);
+    if (isNaN(d)) return;
+    const item = map.get(keyOf(d));
+    if (item) item.value++;
+  });
+  return [...map.values()];
+}
+
+// ============================================================
+// CHARTS (SVG and CSS, no external libraries)
+// ============================================================
+function emptyChart() {
+  return { html: '<p class="chart-empty">No records in this view.</p>', caption: 'No records' };
+}
+
+function columnChart(items) {
+  if (!items.length || items.every(i => i.value === 0)) return emptyChart();
+  const max = Math.max(...items.map(i => i.value));
+  const step = Math.ceil(items.length / 10);
+  const peak = items.reduce((a, b) => (b.value > a.value ? b : a));
+  const cols = items.map((i, idx) => {
+    const px = i.value ? Math.max(2, Math.round(i.value / max * 150)) : 0;
+    const lbl = idx % step === 0 ? esc(i.label) : '';
+    return `<li class="col" aria-label="${esc(i.label)}: ${i.value}">
+      <span class="col-val">${i.value}</span>
+      <span class="col-bar" style="height:${px}px"></span>
+      <span class="col-lbl">${lbl}</span></li>`;
+  }).join('');
+  return {
+    html: `<ol class="cols${items.length > 14 ? ' dense' : ''}">${cols}</ol>`,
+    caption: `Peak ${peak.value} on ${esc(peak.label)}`
+  };
+}
+
+function hbars(items) {
+  if (!items.length) return emptyChart();
+  const max = Math.max(...items.map(i => i.value));
+  const sum = items.reduce((a, b) => a + b.value, 0);
+  const rows = items.map(i => `<li>
+      <span class="hb-lbl">${esc(i.label)}</span>
+      <span class="hb-track" aria-hidden="true"><i style="width:${Math.round(i.value / max * 100)}%"></i></span>
+      <b class="hb-val">${i.value}<small>${Math.round(i.value / sum * 100)}%</small></b></li>`).join('');
+  return {
+    html: `<ul class="hbars">${rows}</ul>`,
+    caption: `${items.length} ${items.length === 1 ? 'category' : 'categories'}, ${sum} records`
+  };
+}
+
+function donut(open, closed) {
+  const total = open + closed;
+  if (!total) return emptyChart();
+  const openLen = open / total * DONUT_C;
+  const closedLen = closed / total * DONUT_C;
+  return {
+    html: `<div class="donut-wrap">
+      <svg class="donut" viewBox="0 0 120 120" role="img" aria-label="${open} open, ${closed} closed">
+        <g transform="rotate(-90 60 60)">
+          <circle class="d-track" cx="60" cy="60" r="${DONUT_R}"/>
+          <circle class="d-open" cx="60" cy="60" r="${DONUT_R}" stroke-dasharray="${openLen} ${DONUT_C}"/>
+          <circle class="d-closed" cx="60" cy="60" r="${DONUT_R}" stroke-dasharray="${closedLen} ${DONUT_C}" stroke-dashoffset="${-openLen}"/>
+        </g>
+        <text x="60" y="58" text-anchor="middle" class="d-total">${total}</text>
+        <text x="60" y="74" text-anchor="middle" class="d-lbl">records</text>
+      </svg>
+      <ul class="legend">
+        <li><span class="sw open"></span>Open<b>${open}</b></li>
+        <li><span class="sw closed"></span>Closed<b>${closed}</b></li>
+      </ul>
+    </div>`,
+    caption: `${open} open, ${closed} closed`
+  };
+}
+
+function chartCard(id, title, note, res, cls = '') {
+  return `<section class="card chart ${cls}" aria-labelledby="${id}-t">
+    <header class="chart-head"><h2 id="${id}-t">${esc(title)}</h2><p class="muted">${esc(note)}</p></header>
+    <figure class="chart-fig">
+      <div class="chart-body">${res.html}</div>
+      <figcaption class="chart-cap">${res.caption}</figcaption>
+    </figure>
+  </section>`;
+}
+
+function renderCharts(rows) {
+  const m = REG.meta;
+  const days = Math.round((new Date(m.end + 'T00:00:00') - new Date(m.start + 'T00:00:00')) / 86400000) + 1;
+  const monthly = days > 62;
+  const open = rows.filter(r => r.status === 'Open').length;
+  const closed = rows.filter(r => r.status === 'Closed').length;
+
+  $('chartGrid').innerHTML = [
+    chartCard('c-trend', 'Records over time', monthly ? 'Monthly count' : 'Daily count',
+      columnChart(trendBuckets(rows, m.start, m.end, monthly)), 'wide'),
+    chartCard('c-status', 'Open and closed', 'Case status', donut(open, closed)),
+    chartCard('c-area', 'By area', 'Where the phone was found', hbars(countBy(rows, 'area'))),
+    chartCard('c-type', 'By person type', 'Who was recorded', hbars(countBy(rows, 'personType'))),
+    chartCard('c-section', 'By section', 'Sections with the most records', hbars(countBy(rows, 'section'))),
+    chartCard('c-source', 'How it was detected', 'Inspection, rounds, monitoring and AI', hbars(countBy(rows, 'source')))
+  ].join('');
+}
+
+// ============================================================
+// REPORT RENDERING
 // ============================================================
 function table(headers, rows) {
   const head = `<thead><tr>${headers.map(h => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead>`;
   const body = rows.length
     ? rows.map(r => `<tr>${r.map((c, i) => `<td data-label="${esc(headers[i])}">${c}</td>`).join('')}</tr>`).join('')
-    : `<tr><td colspan="${headers.length}">No records in this period</td></tr>`;
+    : `<tr><td colspan="${headers.length}">No records</td></tr>`;
   return `<div class="table-wrap"><table class="stack">${head}<tbody>${body}</tbody></table></div>`;
 }
 
-function renderReport(r, start, end) {
-  const bySec = Object.entries(r.bySection || {}).map(([k, v]) => [esc(k), esc(v)]);
-  const bySrc = Object.entries(r.bySource || {}).map(([k, v]) => [esc(k), esc(v)]);
-  const reps = (r.repeatOffenders || []).map(p => [esc(p.name), esc(p.cardNo || p.company || '—'), esc(p.count)]);
-  const recs = (r.rows || []).map(x => [
-    esc(fmt(x.dateTime)), esc(x.name), esc(x.cardNo || x.company || '—'),
-    esc(x.area), esc(x.source), esc(x.action), esc(x.status)
-  ]);
-  const ai = (r.bySource || {})['AI detection'] || 0;
-
-  $('reportOut').innerHTML = `
-    <p class="report-range">Showing ${esc(fmtDate(start))} to ${esc(fmtDate(end))}</p>
-    <div class="report-stack">
-      <div class="kpis">
-        <div class="kpi"><span class="kpi-label">In period</span><span class="kpi-value">${esc(r.total)}</span></div>
-        <div class="kpi"><span class="kpi-label">Previous period</span><span class="kpi-value">${esc(r.previous)}</span></div>
-        <div class="kpi"><span class="kpi-label">AI-detected</span><span class="kpi-value">${esc(ai)}</span></div>
-      </div>
-
-      <div class="report-pair">
-        <section class="card" aria-labelledby="secTitle">
-          <h2 class="card-title" id="secTitle">By section</h2>
-          ${table(['Section', 'Count'], bySec)}
-        </section>
-        <section class="card" aria-labelledby="srcTitle">
-          <h2 class="card-title" id="srcTitle">By detection source</h2>
-          ${table(['Source', 'Count'], bySrc)}
-        </section>
-      </div>
-
-      <section class="card" aria-labelledby="repTitle">
-        <h2 class="card-title" id="repTitle">Repeat offenders</h2>
-        ${table(['Name', 'Card No / company', 'Count'], reps)}
-      </section>
-
-      <section class="card" aria-labelledby="recTitle">
-        <h2 class="card-title" id="recTitle">Records</h2>
-        ${table(['Date and time', 'Name', 'Card No / company', 'Area', 'Source', 'Action', 'Status'], recs)}
-      </section>
-    </div>`;
+function renderRepeat() {
+  const reps = (REG.meta.repeatOffenders || []).map(p => [esc(p.name), esc(p.cardNo || p.company || '—'), esc(p.count)]);
+  $('repOut').innerHTML = table(['Name', 'Card No / company', 'Count'], reps);
 }
 
+function renderKpis() {
+  const m = REG.meta, all = REG.rows.length, f = REG.filtered;
+  const delta = m.previous ? Math.round((all - m.previous) / m.previous * 100) : null;
+  $('kTotal').textContent = f.length;
+  $('kTotalSub').textContent = f.length < all ? `of ${all} in range` : 'in selected range';
+  $('kOpen').textContent = f.filter(r => r.status === 'Open').length;
+  $('kAI').textContent = f.filter(r => r.source === 'AI detection').length;
+  $('kPrev').textContent = m.previous;
+  $('kDelta').textContent = delta === null
+    ? 'No earlier records to compare'
+    : `${delta >= 0 ? '+' : ''}${delta}% against the previous period`;
+  $('kRepeat').textContent = (m.repeatOffenders || []).length;
+}
+
+function rowHtml(r) {
+  const status = r.status === 'Open'
+    ? '<span class="pill open">Open</span>'
+    : '<span class="pill closed">Closed</span>';
+  const occ = r.occurrence > 1
+    ? `<span class="pill repeat">${esc(r.occurrence)}</span>`
+    : esc(r.occurrence || 1);
+  return `<tr tabindex="0" data-id="${esc(r.id)}" aria-label="Open record ${esc(r.id)} for ${esc(r.name)}">
+    <td data-label="Date">${esc(fmt(r.dateTime))}</td>
+    <td data-label="Record"><span class="mono">${esc(r.id)}</span></td>
+    <td data-label="Person"><b>${esc(r.name)}</b><span class="sub">${esc(r.personType)}</span></td>
+    <td data-label="Card / company">${esc(r.cardNo || r.company || '—')}</td>
+    <td data-label="Section">${esc(r.section || '—')}</td>
+    <td data-label="Area">${esc(r.area || '—')}</td>
+    <td data-label="Detected by">${esc(r.source || '—')}</td>
+    <td data-label="Action">${esc(r.action || '—')}</td>
+    <td data-label="Status">${status}</td>
+    <td data-label="Violation no.">${occ}</td>
+  </tr>`;
+}
+
+function renderRegister() {
+  const rows = REG.filtered;
+  const shown = rows.slice(0, REG.page * PAGE_SIZE);
+  const body = $('regBody');
+
+  if (!rows.length) {
+    const empty = REG.rows.length
+      ? `<div class="empty-inline"><b>No records match these filters</b><button type="button" class="btn btn-secondary" data-action="clear">Clear filters</button></div>`
+      : `<div class="empty-inline"><b>No records in this range</b>Try a wider date range.</div>`;
+    body.innerHTML = `<tr><td colspan="10">${empty}</td></tr>`;
+  } else {
+    body.innerHTML = shown.map(rowHtml).join('');
+  }
+
+  $('regCount').textContent = rows.length
+    ? `Showing ${shown.length} of ${rows.length} ${rows.length === 1 ? 'record' : 'records'}`
+    : '0 records';
+  const remaining = rows.length - shown.length;
+  $('regMore').hidden = remaining <= 0;
+  $('regMore').textContent = `Show ${Math.min(PAGE_SIZE, remaining)} more`;
+}
+
+function updateFilterCount() {
+  const active = [
+    $('regSearch').value.trim(), $('fType').value, $('fArea').value,
+    $('fSource').value, $('fStatus').value, $('fAction').value
+  ].filter(Boolean).length;
+  $('filterCount').textContent = active ? `${active} active` : '';
+  $('regExport').disabled = REG.filtered.length === 0;
+}
+
+// Re-applies filters and sorting, then redraws everything that depends on them
+function refresh() {
+  const f = {
+    q: $('regSearch').value.trim().toLowerCase(),
+    personType: $('fType').value,
+    area: $('fArea').value,
+    source: $('fSource').value,
+    status: $('fStatus').value,
+    action: $('fAction').value
+  };
+  const sort = SORTS[$('regSort').value] || SORTS['date-desc'];
+  REG.filtered = REG.rows.filter(r => passes(r, f)).sort(sort);
+  renderKpis();
+  renderCharts(REG.filtered);
+  renderRegister();
+  updateFilterCount();
+}
+
+function onFilterChange() {
+  REG.page = 1;
+  refresh();
+}
+
+function populateFilters() {
+  const map = { fType: 'personType', fArea: 'area', fSource: 'source', fStatus: 'status', fAction: 'action' };
+  Object.entries(map).forEach(([id, key]) => {
+    const vals = [...new Set(REG.rows.map(r => r[key]).filter(Boolean))].sort();
+    $(id).innerHTML = '<option value="">All</option>' + vals.map(v => `<option>${esc(v)}</option>`).join('');
+  });
+}
+
+function clearFilters() {
+  $('regSearch').value = '';
+  ['fType', 'fArea', 'fSource', 'fStatus', 'fAction'].forEach(id => { $(id).value = ''; });
+  $('regSort').value = 'date-desc';
+  onFilterChange();
+}
+
+function reportShell(start, end) {
+  const sortOpts = [
+    ['date-desc', 'Newest first'], ['date-asc', 'Oldest first'], ['name-asc', 'Name A to Z'],
+    ['area-asc', 'Area A to Z'], ['status-asc', 'Status'], ['occ-desc', 'Most violations']
+  ].map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+
+  const filterField = (id, label) => `
+    <div class="field"><label for="${id}">${label}</label>
+      <select id="${id}"><option value="">All</option></select></div>`;
+
+  return `
+    <p class="report-range">Showing ${esc(fmtDate(start))} to ${esc(fmtDate(end))}</p>
+
+    <div class="kpis">
+      <div class="kpi"><span class="kpi-label">Violations</span><span class="kpi-value" id="kTotal">0</span><span class="kpi-sub" id="kTotalSub"></span></div>
+      <div class="kpi"><span class="kpi-label">Previous period</span><span class="kpi-value" id="kPrev">0</span><span class="kpi-sub" id="kDelta"></span></div>
+      <div class="kpi"><span class="kpi-label">Open cases</span><span class="kpi-value" id="kOpen">0</span><span class="kpi-sub">Awaiting closure</span></div>
+      <div class="kpi"><span class="kpi-label">AI-detected</span><span class="kpi-value" id="kAI">0</span><span class="kpi-sub">Automated detections</span></div>
+      <div class="kpi"><span class="kpi-label">Repeat offenders</span><span class="kpi-value" id="kRepeat">0</span><span class="kpi-sub">Two or more violations</span></div>
+    </div>
+
+    <div class="chart-grid" id="chartGrid"></div>
+
+    <section class="card section-card" aria-labelledby="repTitle">
+      <h2 class="card-title" id="repTitle">Repeat offenders</h2>
+      <div id="repOut"></div>
+    </section>
+
+    <section class="card register-card" aria-labelledby="regTitle">
+      <div class="register-head">
+        <div>
+          <h2 id="regTitle">Violation register</h2>
+          <p class="count" id="regCount" aria-live="polite"></p>
+        </div>
+        <div class="toolbar no-print">
+          <label class="sr-only" for="regSort">Sort records</label>
+          <select id="regSort" class="sort-select">${sortOpts}</select>
+          <button type="button" class="btn btn-secondary" id="regExport">Export CSV</button>
+        </div>
+      </div>
+
+      <details class="filters no-print" id="filters" ${isPhone() ? '' : 'open'}>
+        <summary>Filters <span class="filter-count" id="filterCount"></span></summary>
+        <div class="filter-grid">
+          <div class="field">
+            <label for="regSearch">Search</label>
+            <input id="regSearch" type="search" autocomplete="off" placeholder="Name, card, company, record or area">
+          </div>
+          ${filterField('fType', 'Person type')}
+          ${filterField('fArea', 'Area')}
+          ${filterField('fSource', 'Detected by')}
+          ${filterField('fStatus', 'Status')}
+          ${filterField('fAction', 'Action taken')}
+          <div class="field field-actions">
+            <button type="button" class="btn btn-ghost" id="regClear">Clear filters</button>
+          </div>
+        </div>
+      </details>
+
+      <div class="table-wrap">
+        <table class="register stack">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Record</th>
+              <th scope="col">Person</th>
+              <th scope="col">Card / company</th>
+              <th scope="col">Section</th>
+              <th scope="col">Area</th>
+              <th scope="col">Detected by</th>
+              <th scope="col">Action taken</th>
+              <th scope="col">Status</th>
+              <th scope="col">Violation no.</th>
+            </tr>
+          </thead>
+          <tbody id="regBody"></tbody>
+        </table>
+      </div>
+      <div class="reg-foot no-print">
+        <button type="button" class="btn btn-secondary" id="regMore" hidden>Show more</button>
+      </div>
+    </section>`;
+}
+
+function renderReport(r, start, end) {
+  REG.rows = (r.rows || []).map(normRow);
+  REG.meta = {
+    start, end,
+    total: r.total,
+    previous: r.previous,
+    repeatOffenders: r.repeatOffenders || []
+  };
+  REG.page = 1;
+  $('reportOut').innerHTML = reportShell(start, end);
+  populateFilters();
+  renderRepeat();
+  refresh();
+}
+
+// ============================================================
+// RECORD DETAIL
+// ============================================================
+function openRecord(id, trigger) {
+  const r = REG.rows.find(x => x.id === id);
+  if (!r) return;
+  REG.lastTrigger = trigger || null;
+  $('dlgTitle').textContent = `${r.name} · ${r.id}`;
+  const fields = [
+    ['Record', r.id],
+    ['Date and time', fmt(r.dateTime)],
+    ['Person type', r.personType],
+    ['Name', r.name],
+    ['Card No', r.cardNo || '—'],
+    ['Company', r.company || '—'],
+    ['Supervisor', r.supervisor || '—'],
+    ['Person visited', r.hostCard || '—'],
+    ['Section', r.section || '—'],
+    ['Area', r.area || '—'],
+    ['Activity', r.activity || '—'],
+    ['Detected by', r.source || '—'],
+    ['Violation no.', r.occurrence || 1],
+    ['Action taken', r.action || '—'],
+    ['Status', r.status || '—'],
+    ['Remarks', r.remarks || '—'],
+    ['Recorded by', r.officer || '—']
+  ];
+  $('dlgFields').innerHTML = fields
+    .map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('');
+  $('recDialog').showModal();
+}
+
+// ============================================================
+// CSV EXPORT
+// ============================================================
+function exportCsv() {
+  const rows = REG.filtered;
+  if (!rows.length) return showMsg('There are no records to export.', true);
+
+  const cols = [
+    ['Record', 'id'], ['Date and time', 'dateTime'], ['Person type', 'personType'],
+    ['Name', 'name'], ['Card No', 'cardNo'], ['Company', 'company'],
+    ['Supervisor', 'supervisor'], ['Section', 'section'], ['Area', 'area'],
+    ['Activity', 'activity'], ['Detected by', 'source'], ['Violation no.', 'occurrence'],
+    ['Action taken', 'action'], ['Status', 'status'], ['Remarks', 'remarks'], ['Recorded by', 'officer']
+  ];
+
+  // Guards against spreadsheet formula injection and quotes the value when needed
+  const cell = v => {
+    let s = String(v ?? '');
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const lines = [cols.map(c => cell(c[0])).join(',')]
+    .concat(rows.map(r => cols.map(c => cell(r[c[1]])).join(',')));
+
+  const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `violations_${REG.meta.start}_${REG.meta.end}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showMsg(`Exported ${rows.length} ${rows.length === 1 ? 'record' : 'records'}`);
+}
+
+// ============================================================
+// REPORT RANGE
+// ============================================================
 function setPreset(kind) {
   const now = new Date();
   let s, e;
@@ -1622,7 +1984,7 @@ function init() {
   $('todayText').textContent = new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
 
   buildChips('personChips', PERSON_TYPES, 'Employee', applyPersonType);
-  buildChips('sourceChips', SOURCES, null, renderGuide);
+  buildChips('sourceChips', SOURCES, null, renderPolicy);
 
   ALL_AREAS.forEach(a => appendOption($('areaList'), a));
   ACTIVITIES.forEach(a => appendOption($('activityList'), a));
@@ -1632,26 +1994,21 @@ function init() {
   $('cardNo').addEventListener('change', onCardChange);
 
   // Live update while typing; history lookups run on leaving the field
-  $('name').addEventListener('input', renderGuide);
+  $('name').addEventListener('input', renderPolicy);
   $('name').addEventListener('change', () => {
     if (currentType() === 'Visitor') onVisitorChange();
-    else renderGuide();
+    else renderPolicy();
   });
-  $('section').addEventListener('input', renderGuide);
-  $('company').addEventListener('input', renderGuide);
+  $('section').addEventListener('input', renderPolicy);
+  $('company').addEventListener('input', renderPolicy);
   $('company').addEventListener('change', onVisitorChange);
-  $('area').addEventListener('input', renderGuide);
-  $('activity').addEventListener('input', renderGuide);
+  $('area').addEventListener('input', renderPolicy);
+  $('activity').addEventListener('input', renderPolicy);
   $('action').addEventListener('input', () => { state.actionTouched = true; });
 
   $('vform').addEventListener('submit', onSubmit);
 
   $('backBtn').addEventListener('click', () => goStep(Math.max(1, state.step - 1), true));
-  document.querySelectorAll('.steps-btn').forEach(b =>
-    b.addEventListener('click', () => {
-      const s = Number(b.dataset.s);
-      if (s < state.step) goStep(s, true);
-    }));
 
   document.querySelectorAll('[data-view]').forEach(b =>
     b.addEventListener('click', () => showView(b.dataset.view)));
@@ -1661,6 +2018,36 @@ function init() {
 
   $('runReport').addEventListener('click', runReport);
   $('printBtn').addEventListener('click', () => window.print());
+
+  // Report interactions are delegated, because the report markup is rebuilt
+  // on every run
+  const out = $('reportOut');
+  out.addEventListener('input', e => {
+    if (e.target.id === 'regSearch') onFilterChange();
+  });
+  out.addEventListener('change', e => {
+    if (['fType', 'fArea', 'fSource', 'fStatus', 'fAction', 'regSort'].includes(e.target.id)) onFilterChange();
+  });
+  out.addEventListener('click', e => {
+    const row = e.target.closest('tr[data-id]');
+    if (row) return openRecord(row.dataset.id, row);
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    if (btn.id === 'regMore') { REG.page++; renderRegister(); return; }
+    if (btn.id === 'regExport') return exportCsv();
+    if (btn.id === 'regClear' || btn.dataset.action === 'clear') clearFilters();
+  });
+  out.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const row = e.target.closest('tr[data-id]');
+    if (!row) return;
+    e.preventDefault();
+    openRecord(row.dataset.id, row);
+  });
+
+  $('recDialog').addEventListener('close', () => {
+    if (REG.lastTrigger && REG.lastTrigger.isConnected) REG.lastTrigger.focus();
+  });
 
   showView('record');
   applyPersonType();
