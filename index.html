@@ -397,13 +397,20 @@
 
   /* ============================================================
      TOAST
+     Hidden: moved well above the screen and transparent.
+     Shown: slides into place. The element stays in the page so
+     screen readers still announce messages.
      ============================================================ */
   .toast{
-    position:fixed;left:50%;top:calc(var(--s4) + env(safe-area-inset-top,0px));z-index:70;
-    width:min(92vw,400px);transform:translate(-50%,-160%);
-    transition:transform .2s var(--ease);pointer-events:none;
+    position:fixed;left:50%;top:-240px;z-index:70;
+    width:min(92vw,400px);transform:translateX(-50%);
+    opacity:0;pointer-events:none;
+    transition:top .22s var(--ease),opacity .22s var(--ease);
   }
-  .toast.show{transform:translate(-50%,0)}
+  .toast.show{
+    top:calc(var(--s4) + env(safe-area-inset-top,0px));
+    opacity:1;
+  }
   .toast-inner{
     display:flex;align-items:flex-start;gap:var(--s3);
     padding:12px 14px;border-radius:var(--r-md);
@@ -480,7 +487,7 @@
     .content{
       padding:var(--s3) var(--s3) calc(var(--tabbar-h) + var(--actionbar-h) + var(--s5) + env(safe-area-inset-bottom,0px));
     }
-    .toast{top:calc(var(--topbar-h) + var(--s2) + env(safe-area-inset-top,0px))}
+    .toast.show{top:calc(var(--topbar-h) + var(--s2) + env(safe-area-inset-top,0px))}
     .bottom-nav{display:grid}
 
     .phone-progress{display:block;padding:var(--s3) var(--s4) 0}
@@ -789,16 +796,13 @@
             </div>
             <div class="btn-group">
               <button type="button" class="btn btn-secondary" id="printBtn">Print or save PDF</button>
-              <button type="button" class="btn btn-primary" id="runReport">Generate report</button>
+              <button type="button" class="btn btn-primary" id="runReport">Refresh</button>
             </div>
           </div>
         </div>
 
-        <div id="reportOut" aria-live="polite">
-          <div class="empty">
-            <b>No report yet</b>
-            Choose a date range, then select Generate report.
-          </div>
+        <div id="reportOut" aria-live="polite" aria-busy="true">
+          <div class="empty"><b>Loading the register…</b>Records for this month will appear here.</div>
         </div>
       </section>
 
@@ -896,8 +900,9 @@ const isPhone = () => phoneMQ.matches;
 // opens. Kept in memory only, never in localStorage.
 const LOOKUP = { people: new Map(), ready: null };
 
-// Report data for the current date range
-const REG = { rows: [], filtered: [], meta: {}, page: 1, lastTrigger: null };
+// Report data for the current date range. loaded and loading track whether
+// the register has been fetched, so switching tabs doesn't refetch it.
+const REG = { rows: [], filtered: [], meta: {}, page: 1, lastTrigger: null, loaded: false, loading: false };
 const PAGE_SIZE = 25;
 const DONUT_R = 46;
 const DONUT_C = 2 * Math.PI * DONUT_R;
@@ -1198,8 +1203,7 @@ function applyPersonType() {
   const trainee = t === 'Trainee / apprentice';
 
   $('cardSec').hidden = visitor;
-  $('sectionSec') && ($('sectionSec').hidden = visitor);
-  $('section').closest('.field').hidden = visitor;
+  $('sectionSec').hidden = visitor;
   $('companySec').hidden = !(contractor || visitor);
   $('companyLabel').textContent = visitor ? 'Visitor company' : 'Contractor company';
   $('supervisorSec').hidden = !(contractor || trainee);
@@ -1392,12 +1396,11 @@ function renderPolicy() {
   }
 
   const s = suggest(t, n, chipValue('sourceChips'), activity, area);
-  const areaNote = LEVEL2.has(area) ? [] : [];
   const history = state.lastDate
     ? [{ tone: 'muted-note', text: `Last recorded ${new Date(state.lastDate).toLocaleDateString()}` }]
     : (state.prior ? [] : [{ tone: 'muted-note', text: 'No earlier violations on record' }]);
 
-  fillPolicy('pl', s, n, history.concat(areaNote));
+  fillPolicy('pl', s, n, history);
   fillPolicy('op', s, n, []);
   if (!state.actionTouched) $('action').value = s.nature.action;
 }
@@ -1459,6 +1462,8 @@ async function onSubmit(e) {
     goStep(1, true);
     // Refresh the preloaded cards so this person is found next time
     preloadLookups();
+    // A saved record changes the register, so reload it next time Reports opens
+    REG.loaded = false;
     window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
   } catch (err) {
     showMsg(err.message, true);
@@ -1922,7 +1927,7 @@ function exportCsv() {
 }
 
 // ============================================================
-// REPORT RANGE
+// REPORT RANGE AND LOADING
 // ============================================================
 function setPreset(kind) {
   const now = new Date();
@@ -1942,22 +1947,43 @@ function setPreset(kind) {
   $('end').value = iso(e);
 }
 
+// Fetches the register for the selected dates and draws the report.
+// Refresh and the quick ranges both come through here.
 async function runReport() {
   const start = $('start').value, end = $('end').value;
   if (!start || !end) return showMsg('Choose both dates for the report.', true);
   if (start > end) return showMsg('The start date is after the end date.', true);
+  if (REG.loading) return;
 
+  REG.loading = true;
+  const btn = $('runReport');
   const out = $('reportOut');
+  btn.disabled = true;
+  btn.textContent = 'Refreshing…';
   out.setAttribute('aria-busy', 'true');
-  out.innerHTML = '<div class="empty"><b>Generating report…</b>This can take a few seconds.</div>';
+
+  // Keep the current report on screen while refreshing; show a placeholder only the first time
+  if (!REG.loaded) out.innerHTML = '<div class="empty"><b>Loading the register…</b>This can take a few seconds.</div>';
+
   try {
     renderReport(await api('report', { start, end }), start, end);
+    REG.loaded = true;
   } catch (err) {
-    out.innerHTML = `<div class="empty"><b>Report not available</b>${esc(err.message)}</div>`;
+    if (!REG.loaded) out.innerHTML = `<div class="empty"><b>Report not available</b>${esc(err.message)}</div>`;
     showMsg(err.message, true);
   } finally {
+    REG.loading = false;
+    btn.disabled = false;
+    btn.textContent = 'Refresh';
     out.removeAttribute('aria-busy');
   }
+}
+
+// Loads the register the first time Reports opens, for this month by default
+function ensureReport() {
+  if (REG.loaded || REG.loading) return;
+  if (!$('start').value || !$('end').value) setPreset('month');
+  runReport();
 }
 
 // ============================================================
@@ -1973,6 +1999,7 @@ function showView(name) {
   });
   $('pageTitle').textContent = rec ? 'New record' : 'Reports';
   window.scrollTo({ top: 0, behavior: 'auto' });
+  if (!rec) ensureReport();
 }
 
 // ============================================================
@@ -2013,8 +2040,12 @@ function init() {
   document.querySelectorAll('[data-view]').forEach(b =>
     b.addEventListener('click', () => showView(b.dataset.view)));
 
+  // Quick ranges set the dates and load the register straight away
   document.querySelectorAll('[data-preset]').forEach(b =>
-    b.addEventListener('click', () => setPreset(b.dataset.preset)));
+    b.addEventListener('click', () => {
+      setPreset(b.dataset.preset);
+      runReport();
+    }));
 
   $('runReport').addEventListener('click', runReport);
   $('printBtn').addEventListener('click', () => window.print());
